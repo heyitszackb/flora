@@ -3,15 +3,6 @@ from Model.main import Model, Position
 from View.main import View
 from Model.main import TileContent
 
-# TODO: In cursor, there is movement logic boundary checking that is duplicated
-# TODO: Refactor the moving and carrying the tile accross the board logic in this file
-# TODO: Evaluate the cursor moving logic. In some places it moves relative but in some places it does not move relative
-# TODO: Check cursor movement bounds.
-# TODO: Position move function doesn't really do anything...but should probably handle position related logic.
-
-# TODO: Block about to be placed should probably be some greyscale version of the real one?
-# TODO: Add rotation of the entire table
-
 class Controller:
     def __init__(self):
         self.model = Model()
@@ -54,6 +45,9 @@ class Controller:
             # Add a grass tile at the NEW location of the cursor
             self.model.garden.add_tile_to_stack(TileContent('g', self.model.cursor.position))
         if pyxel.btnp(pyxel.KEY_RETURN):
+            # If we are on the top layer, we don't add the tile
+            if self.model.cursor.position.height == 5:
+                return
             # Move up the cursor
             self.model.cursor.move_height(1)
             # Add a tile at the cursor's new position

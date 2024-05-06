@@ -26,6 +26,10 @@ class TileContent:
 class Garden:
     def __init__(self, size=5):
         self.tiles = [[[TileContent('g', Position(row, col, 0))] for col in range(size)] for row in range(size)]
+        # self.HEIGHT_LIMIT = 5
+
+    # def get_height_limit(self):
+        # return self.HEIGHT_LIMIT
     
     # Needs to be fixed - the information is duplicated in the tile itself and then in the row/col...
     def add_tile_to_stack(self, tile: TileContent):
@@ -89,7 +93,8 @@ class Cursor:
         min_row = 0
         max_col = len(self.garden.get_tiles()[0]) - 1
         min_col = 0
-        max_height = 10
+        # max_height = self.garden.height_limit
+        max_height = 5
         min_height = 0
 
         clamped_row = max(min_row, min(max_row, row))
