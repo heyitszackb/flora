@@ -1,8 +1,10 @@
-# The build limit should be a function of the garden, not the cursor.
+# Check to make sure each class actually has things that only that class needs and nothing else
+
+# TODO: Understand how the render_list sorting works
 
 # TODO: Refactor the moving and carrying the tile accross the board logic in this file
 
-# TODO: Evaluate the cursor moving logic. In some places it moves relative but in some places it does not move relative
+# Add undo action stack
 
 # TODO: Check cursor movement bounds.
 

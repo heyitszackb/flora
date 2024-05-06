@@ -1,6 +1,5 @@
 import random
 
-
 class Position:
     def __init__(self, row=0, col=0,height=0):
         self.row = row
@@ -26,10 +25,10 @@ class TileContent:
 class Garden:
     def __init__(self, size=5):
         self.tiles = [[[TileContent('g', Position(row, col, 0))] for col in range(size)] for row in range(size)]
-        # self.HEIGHT_LIMIT = 5
+        self.height_limit = 5
 
-    # def get_height_limit(self):
-        # return self.HEIGHT_LIMIT
+    def get_height_limit(self):
+        return self.height_limit
     
     # Needs to be fixed - the information is duplicated in the tile itself and then in the row/col...
     def add_tile_to_stack(self, tile: TileContent):
@@ -93,8 +92,7 @@ class Cursor:
         min_row = 0
         max_col = len(self.garden.get_tiles()[0]) - 1
         min_col = 0
-        # max_height = self.garden.height_limit
-        max_height = 5
+        max_height = self.garden.get_height_limit()
         min_height = 0
 
         clamped_row = max(min_row, min(max_row, row))
@@ -106,31 +104,9 @@ class Cursor:
     def get_position(self):
         return self.position
 
-
-    # # move operates on relative position
-    # def move(self, drow, dcol, height):
-    #     # Row and column move relative to the previous position. Height is seperate.
-    #     max_row = len(self.garden.get_tiles()) - 1
-    #     max_col = len(self.garden.get_row(0)) - 1
-
-    #     new_row = min(max(self.position.row + drow, 0), max_row)
-    #     new_col = min(max(self.position.col + dcol, 0), max_col)
-    #     new_height = height
-    #     self.position.row, self.position.col, self.position.height = new_row, new_col, new_height
-
     def move_to_top_of_stack(self):
         top = len(self.garden.get_stack(self.position.row, self.position.col))
-        
         self.set_position(self.position.row, self.position.col, top)
-    
-    # def move_to_top_of_stack(self, drow, dcol):
-    #     max_row = len(self.garden.get_tiles()) - 1
-    #     max_col = len(self.garden.get_row(0)) - 1
-
-    #     new_row = min(max(self.position.row + drow, 0), max_row)
-    #     new_col = min(max(self.position.col + dcol, 0), max_col)
-
-    #     self.move(drow, dcol, len(self.garden.get_stack(new_row, new_col)))
 
     def __str__(self):
         return f"Cursor at {self.position}"

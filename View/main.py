@@ -12,6 +12,10 @@ class View:
         self.origin_x = 80
         self.origin_y = 60
 
+        self.tile_height = 10
+        self.tile_row_length = 16
+        self.tile_col_length = 8
+
     def update(self): # view update doesn't actually render anything, just necessary for INTERNAL VIEW LOGIC
         pass
 
@@ -77,12 +81,12 @@ class View:
         height_offset_y -= 10
         '''
 
-        row_offset_x = -16*row
-        row_offset_y = 8*row
-        col_offset_x = col*16
-        col_offset_y = col*8
+        row_offset_x = -self.tile_row_length*row
+        row_offset_y = self.tile_col_length*row
+        col_offset_x = col*self.tile_row_length
+        col_offset_y = col*self.tile_col_length
         height_offset_x = 0
-        height_offset_y = -10*height # 10 is the height. It is not a multiple of 8 so that height layers can be better distinguished
+        height_offset_y = -self.tile_height*height # 10 is the height. It is not a multiple of 8 so that height layers can be better distinguished
 
         overall_x = origin_x + row_offset_x + col_offset_x + height_offset_x
         overall_y = origin_y + row_offset_y + col_offset_y + height_offset_y
