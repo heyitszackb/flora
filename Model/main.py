@@ -6,11 +6,6 @@ class Position:
         self.col = col
         self.height = height
 
-    def move(self, drow, dcol, dheight):
-        self.row += drow
-        self.col += dcol
-        self.height += dheight
-
 class TileContent:
     def __init__(self, tile_type='g', position=None):
         self.tile_type = tile_type
@@ -26,9 +21,13 @@ class Garden:
     def __init__(self, size=5):
         self.tiles = [[[TileContent('g', Position(row, col, 0))] for col in range(size)] for row in range(size)]
         self.height_limit = 5
+        self.depth_limit = 0
 
     def get_height_limit(self):
         return self.height_limit
+
+    def get_depth_limit(self):
+        return self.depth_limit
     
     # Needs to be fixed - the information is duplicated in the tile itself and then in the row/col...
     def add_tile_to_stack(self, tile: TileContent):
@@ -75,16 +74,16 @@ class Cursor:
         self.position = Position(start_row, start_col, start_height)
 
     # Relative to current position: Positive is up, negative is down
-    def move_height(self, num_height_tiles):
-        self.set_position(self.position.row, self.position.col, self.position.height + num_height_tiles)
+    def move_height(self, dheight):
+        self.set_position(self.position.row, self.position.col, self.position.height + dheight)
 
     # Relative to current position: Positive is increasingm rows, negative is decreasing rows
-    def move_row(self, num_row_tiles):
-        self.set_position(self.position.row + num_row_tiles, self.position.col, self.position.height)
+    def move_row(self, drow):
+        self.set_position(self.position.row + drow, self.position.col, self.position.height)
 
     # Relative to current position: Positive is increasingm cols, negative is decreasing cols
-    def move_col(self, num_col_tiles):
-        self.set_position(self.position.row, self.position.col + num_col_tiles, self.position.height)
+    def move_col(self, dcol):
+        self.set_position(self.position.row, self.position.col + dcol, self.position.height)
 
     # Set position is what does all boundary checking for this function
     def set_position(self, row, col, height):
@@ -93,7 +92,7 @@ class Cursor:
         max_col = len(self.garden.get_tiles()[0]) - 1
         min_col = 0
         max_height = self.garden.get_height_limit()
-        min_height = 0
+        min_height = self.garden.get_depth_limit()
 
         clamped_row = max(min_row, min(max_row, row))
         clamped_col = max(min_col, min(max_col, col))
@@ -116,17 +115,37 @@ class Model:
     def __init__(self):
         self.garden = Garden()
         self.cursor = Cursor(self.garden)
-    
-    def place_tile(self, drow, dcol, dheight):
-        tile = TileContent('g', Position(drow, dcol, dheight))
-        self.garden.add_tile(tile, drow, dcol)
 
-    def move_cursor(self, drow, dcol, dheight):
-        self.cursor.move(drow, dcol, dheight)
+    def move_cursor_with_tile(self, drow: int, dcol: int):
+        self.garden.remove_tile_from_stack(self.cursor.position.row,self.cursor.position.col)
+        self.cursor.move_row(drow)
+        self.cursor.move_col(dcol)
+        self.cursor.move_to_top_of_stack()
+        self.garden.add_tile_to_stack(TileContent('g', self.cursor.position))
 
-    def cursor_position(self):
-        return self.cursor.get_position()
-    
+    def set_cursor_with_tile(self, row, col):
+        self.garden.remove_tile_from_stack(self.cursor.position.row,self.cursor.position.col)
+        self.cursor.set_position(row, col, 0)
+        self.cursor.move_to_top_of_stack()
+        self.garden.add_tile_to_stack(TileContent('g', self.cursor.position))
+
+    def place_tile_at_cursor(self):
+        if self.cursor.position.height >= self.garden.get_height_limit():
+            return
+        # Move up the cursor
+        self.cursor.move_height(1)
+        # Add a tile at the cursor's new position
+        self.garden.add_tile_to_stack(TileContent('g', self.cursor.position))
+
+    def delete_tile_at_cursor(self):
+        # If we are on the bottom layer, we don't delete the tile
+        if self.cursor.position.height <= self.garden.depth_limit:
+            return
+        # Remove the tile at the location of the cursor
+        self.garden.remove_tile_from_stack(self.cursor.position.row,self.cursor.position.col)
+        # move the cursor down in height
+        self.cursor.move_height(-1)
+
     def get_garden(self):
         return self.garden
     
