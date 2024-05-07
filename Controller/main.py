@@ -21,9 +21,10 @@ class Controller:
             self.model.move_cursor_with_tile(-1,0)
         if pyxel.btnp(pyxel.KEY_RETURN):
             self.model.place_tile_at_cursor()
-        
         if pyxel.btnp(pyxel.KEY_BACKSPACE):
             self.model.delete_tile_at_cursor()
+        if pyxel.btnp(pyxel.KEY_SPACE):
+            self.model.cycle_cursor_tile_type()
 
     def draw(self): # executed each frame
         self.view.render(self.model) # executed each frame

@@ -1,4 +1,12 @@
-# The boundaries of the garden need to only be in the garden (not the cursor too, as it currently is...)
+# This line seems a bit weird but I don't know what to do about it:
+
+self.garden.add_tile_to_stack(TileContent(self.cursor.get_current_tile_type(), self.cursor.position))
+
+# Think about the changes I implemented.
+
+# Think about data structure that is holding the tiles. I could potentially refactor it to make expanding better. But also, it is nice to have it simple.
+
+# When user presses space, should cycle the tile type
 
 # Check to make sure each class actually has things that only that class needs and nothing else
 
@@ -8,11 +16,7 @@
 
 # TODO: Understand how the render_list sorting works. Can I modify to understand it better?
 
-# TODO: Refactor the moving and carrying the tile accross the board logic in this file
-
 # Add undo action stack
-
-# TODO: Check cursor movement bounds.
 
 # TODO: Block about to be placed should probably be some greyscale version of the real one?
 

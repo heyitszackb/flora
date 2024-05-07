@@ -72,6 +72,22 @@ class Cursor:
     def __init__(self, garden: Garden, start_row=1, start_col=0, start_height=0):
         self.garden = garden
         self.position = Position(start_row, start_col, start_height)
+        self.current_type = 'g'
+
+    def get_current_tile_type(self):
+        return self.current_type
+    
+    def set_current_tile_type(self, tile_type):
+        self.current_type = tile_type
+
+    def cycle_tile_type(self):
+        # Change what the cursor places
+        if self.current_type == 'g':
+            self.current_type = 'd'
+        
+        elif self.current_type == 'd':
+            self.current_type = 'g'
+
 
     # Relative to current position: Positive is up, negative is down
     def move_height(self, dheight):
@@ -121,13 +137,13 @@ class Model:
         self.cursor.move_row(drow)
         self.cursor.move_col(dcol)
         self.cursor.move_to_top_of_stack()
-        self.garden.add_tile_to_stack(TileContent('g', self.cursor.position))
+        self.garden.add_tile_to_stack(TileContent(self.cursor.get_current_tile_type(), self.cursor.position))
 
     def set_cursor_with_tile(self, row, col):
         self.garden.remove_tile_from_stack(self.cursor.position.row,self.cursor.position.col)
         self.cursor.set_position(row, col, 0)
         self.cursor.move_to_top_of_stack()
-        self.garden.add_tile_to_stack(TileContent('g', self.cursor.position))
+        self.garden.add_tile_to_stack(TileContent(self.cursor.get_current_tile_type(), self.cursor.position))
 
     def place_tile_at_cursor(self):
         if self.cursor.position.height >= self.garden.get_height_limit():
@@ -135,7 +151,7 @@ class Model:
         # Move up the cursor
         self.cursor.move_height(1)
         # Add a tile at the cursor's new position
-        self.garden.add_tile_to_stack(TileContent('g', self.cursor.position))
+        self.garden.add_tile_to_stack(TileContent(self.cursor.get_current_tile_type(), self.cursor.position))
 
     def delete_tile_at_cursor(self):
         # If we are on the bottom layer, we don't delete the tile
@@ -145,6 +161,17 @@ class Model:
         self.garden.remove_tile_from_stack(self.cursor.position.row,self.cursor.position.col)
         # move the cursor down in height
         self.cursor.move_height(-1)
+        # the tile that was below the cursor should now be the same type as the cursor once it is deleted
+        self.garden.remove_tile_from_stack(self.cursor.position.row,self.cursor.position.col)
+        self.garden.add_tile_to_stack(TileContent(self.cursor.get_current_tile_type(), self.cursor.position))
+    
+    # Come back to this
+    def cycle_cursor_tile_type(self):
+        # Change what the cursor places in the future
+        self.cursor.cycle_tile_type()
+        # change the tile at the cursor to the new type
+        self.garden.remove_tile_from_stack(self.cursor.position.row,self.cursor.position.col)
+        self.garden.add_tile_to_stack(TileContent(self.cursor.get_current_tile_type(), self.cursor.position))
 
     def get_garden(self):
         return self.garden
