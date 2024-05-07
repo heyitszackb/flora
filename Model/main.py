@@ -65,7 +65,7 @@ class Garden:
                 for _ in range(num_new_blocks):
                     new_type = 'd' if random.random() < 0.1 else 'g'  # 10% chance for type 'd'
                     new_tile = TileContent(new_type, Position(row, col, current_stack_height))
-                    self.add_tile_to_stack(new_tile, row, col)
+                    self.add_tile_to_stack(new_tile)
                     current_stack_height += 1
     
 class Cursor:

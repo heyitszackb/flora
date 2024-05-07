@@ -52,7 +52,7 @@ class Controller:
             self.model.cursor.move_height(1)
             # Add a tile at the cursor's new position
             self.model.garden.add_tile_to_stack(TileContent('g', self.model.cursor.position))
-            # self.model.garden.randomize_garden()
+            self.model.garden.randomize_garden()
         
         if pyxel.btnp(pyxel.KEY_BACKSPACE):
             # If we are on the bottom layer, we don't delete the tile

@@ -1,6 +1,8 @@
 # Check to make sure each class actually has things that only that class needs and nothing else
 
-# TODO: Understand how the render_list sorting works
+# Add "r" to reset the garden
+
+# TODO: Understand how the render_list sorting works. Can I modify to understand it better?
 
 # TODO: Refactor the moving and carrying the tile accross the board logic in this file
 

@@ -1,3 +1,4 @@
+import random
 import pyxel
 
 from Model.main import Model
@@ -20,6 +21,7 @@ class View:
         pass
 
     def render(self, model: Model): # this is the only function that actually renders things. Renders state based on internal logic of the view code (processed by the view update)
+        pyxel.dither(1)
         pyxel.cls(7)
         render_list = self.collect_renderables(model)
         
@@ -30,6 +32,12 @@ class View:
                 self.render_tile(element)
             elif isinstance(element, Cursor):
                 self.render_cursor(element)
+        
+
+        
+
+
+
     
     def render_tile(self, tile: TileContent):
         x, y = self.calc_xy(self.origin_x, self.origin_y,tile.position.row, tile.position.col,tile.position.height)
