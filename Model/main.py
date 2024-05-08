@@ -120,9 +120,11 @@ class Cursor:
         clamped_row = max(min_row, min(max_row, row))
         clamped_col = max(min_col, min(max_col, col))
         clamped_height = max(min_height, min(max_height, height))
-
-        self.position = Position(clamped_row, clamped_col, clamped_height)
-    
+        
+        self.position.row = clamped_row
+        self.position.col = clamped_col
+        self.position.height = clamped_height
+        
     def get_position(self):
         return self.position
 
@@ -145,14 +147,15 @@ class Model:
         self.cursor.move_row(drow)
         self.cursor.move_col(dcol)
         self.cursor.move_to_top_of_stack()
-        self.garden.add_tile_to_stack(Tile(self.cursor.position,self.cursor.get_current_tile_type()))
+        # I do not like this line, but I need to create a new position in order to eliminate some awful bugs with shared positions
+        self.garden.add_tile_to_stack(Tile(Position(self.cursor.position.row, self.cursor.position.col, self.cursor.position.height), self.cursor.get_current_tile_type()))
 
 
     def set_cursor_with_tile(self, row, col):
         self.garden.remove_tile_from_stack(self.cursor.position.row,self.cursor.position.col)
         self.cursor.set_position(row, col, 0)
         self.cursor.move_to_top_of_stack()
-        self.garden.add_tile_to_stack(Tile(self.cursor.position,self.cursor.get_current_tile_type()))
+        self.garden.add_tile_to_stack(Tile(Position(self.cursor.position.row, self.cursor.position.col, self.cursor.position.height), self.cursor.get_current_tile_type()))
 
     # Places a tile a the cursor's position with the cursor's tile type
     def place_tile_at_cursor(self):
@@ -161,7 +164,8 @@ class Model:
         # Move up the cursor
         self.cursor.move_height(1)
         # Add a tile at the cursor's new position
-        self.garden.add_tile_to_stack(Tile(self.cursor.position,self.cursor.get_current_tile_type()))
+        # I do not like this line, but I need to create a new position in order to eliminate some awful bugs with shared positions
+        self.garden.add_tile_to_stack(Tile(Position(self.cursor.position.row, self.cursor.position.col, self.cursor.position.height), self.cursor.get_current_tile_type()))
 
     # Deletes the tile at the cursor's position
     def delete_tile_at_cursor(self):

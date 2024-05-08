@@ -1,3 +1,5 @@
+# FIX the position logic and move to Position - should NOT be in cursor at all.
+
 # Think about data structure that is holding the tiles. I could potentially refactor it to make expanding better. But also, it is nice to have it simple.
 
 # Check to make sure each class actually has things that only that class needs and nothing else
