@@ -1,12 +1,4 @@
-# This line seems a bit weird but I don't know what to do about it:
-
-self.garden.add_tile_to_stack(TileContent(self.cursor.get_current_tile_type(), self.cursor.position))
-
-# Think about the changes I implemented.
-
 # Think about data structure that is holding the tiles. I could potentially refactor it to make expanding better. But also, it is nice to have it simple.
-
-# When user presses space, should cycle the tile type
 
 # Check to make sure each class actually has things that only that class needs and nothing else
 

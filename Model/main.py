@@ -1,4 +1,5 @@
 import random
+from const import TileType
 
 class Position:
     def __init__(self, row=0, col=0,height=0):
@@ -6,10 +7,13 @@ class Position:
         self.col = col
         self.height = height
 
-class TileContent:
-    def __init__(self, tile_type='g', position=None):
+class Tile:
+    def __init__(self, position=None, tile_type=TileType.GRASS):
         self.tile_type = tile_type
         self.position = position if position else Position()
+
+    def set_tile_type(self, tile_type: TileType):
+        self.tile_type = tile_type
     
     def get_type(self):
         return self.tile_type
@@ -19,7 +23,7 @@ class TileContent:
 
 class Garden:
     def __init__(self, size=5):
-        self.tiles = [[[TileContent('g', Position(row, col, 0))] for col in range(size)] for row in range(size)]
+        self.tiles = [[[Tile(Position(row, col, 0))] for col in range(size)] for row in range(size)]
         self.height_limit = 5
         self.depth_limit = 0
 
@@ -30,17 +34,17 @@ class Garden:
         return self.depth_limit
     
     # Needs to be fixed - the information is duplicated in the tile itself and then in the row/col...
-    def add_tile_to_stack(self, tile: TileContent):
+    def add_tile_to_stack(self, tile: Tile):
         self.tiles[tile.position.row][tile.position.col].append(tile)
     
-    def remove_tile_from_stack(self, row, col):
+    def remove_tile_from_stack(self, row: int, col: int):
         # If there is nothing in the stack, do nothing
         if len(self.tiles[row][col]) == 0:
             return
         self.tiles[row][col].pop()
 
-    def get_tile(self, row, col, height):
-        return self.tiles[row][col][height]
+    def get_tile(self, position: Position):
+        return self.tiles[position.row][position.col][position.height]
     
     def get_stack(self, row, col):
         return self.tiles[row][col]
@@ -62,8 +66,8 @@ class Garden:
                 # Random number of new grass blocks to add (between 1 and 3)
                 num_new_blocks = random.randint(1, 3)
                 for _ in range(num_new_blocks):
-                    new_type = 'd' if random.random() < 0.1 else 'g'  # 10% chance for type 'd'
-                    new_tile = TileContent(new_type, Position(row, col, current_stack_height))
+                    new_type = TileType.DIRT if random.random() < 0.1 else TileType.GRASS  # 10% chance for type 'd'
+                    new_tile = Tile(Position(row, col, current_stack_height), new_type)
                     self.add_tile_to_stack(new_tile)
                     current_stack_height += 1
     
@@ -72,7 +76,7 @@ class Cursor:
     def __init__(self, garden: Garden, start_row=1, start_col=0, start_height=0):
         self.garden = garden
         self.position = Position(start_row, start_col, start_height)
-        self.current_type = 'g'
+        self.current_type = TileType.GRASS
 
     def get_current_tile_type(self):
         return self.current_type
@@ -81,12 +85,15 @@ class Cursor:
         self.current_type = tile_type
 
     def cycle_tile_type(self):
-        # Change what the cursor places
-        if self.current_type == 'g':
-            self.current_type = 'd'
+        # cycle between g, d, and w
+        if self.current_type == TileType.GRASS:
+            self.current_type = TileType.DIRT
         
-        elif self.current_type == 'd':
-            self.current_type = 'g'
+        elif self.current_type == TileType.DIRT:
+            self.current_type = TileType.WATER
+        
+        elif self.current_type == TileType.WATER:
+            self.current_type = TileType.GRASS
 
 
     # Relative to current position: Positive is up, negative is down
@@ -132,27 +139,31 @@ class Model:
         self.garden = Garden()
         self.cursor = Cursor(self.garden)
 
+    # move the cursor by drow and dcol with the tile that was at the cursor's position
     def move_cursor_with_tile(self, drow: int, dcol: int):
         self.garden.remove_tile_from_stack(self.cursor.position.row,self.cursor.position.col)
         self.cursor.move_row(drow)
         self.cursor.move_col(dcol)
         self.cursor.move_to_top_of_stack()
-        self.garden.add_tile_to_stack(TileContent(self.cursor.get_current_tile_type(), self.cursor.position))
+        self.garden.add_tile_to_stack(Tile(self.cursor.position,self.cursor.get_current_tile_type()))
+
 
     def set_cursor_with_tile(self, row, col):
         self.garden.remove_tile_from_stack(self.cursor.position.row,self.cursor.position.col)
         self.cursor.set_position(row, col, 0)
         self.cursor.move_to_top_of_stack()
-        self.garden.add_tile_to_stack(TileContent(self.cursor.get_current_tile_type(), self.cursor.position))
+        self.garden.add_tile_to_stack(Tile(self.cursor.position,self.cursor.get_current_tile_type()))
 
+    # Places a tile a the cursor's position with the cursor's tile type
     def place_tile_at_cursor(self):
         if self.cursor.position.height >= self.garden.get_height_limit():
             return
         # Move up the cursor
         self.cursor.move_height(1)
         # Add a tile at the cursor's new position
-        self.garden.add_tile_to_stack(TileContent(self.cursor.get_current_tile_type(), self.cursor.position))
+        self.garden.add_tile_to_stack(Tile(self.cursor.position,self.cursor.get_current_tile_type()))
 
+    # Deletes the tile at the cursor's position
     def delete_tile_at_cursor(self):
         # If we are on the bottom layer, we don't delete the tile
         if self.cursor.position.height <= self.garden.depth_limit:
@@ -162,16 +173,13 @@ class Model:
         # move the cursor down in height
         self.cursor.move_height(-1)
         # the tile that was below the cursor should now be the same type as the cursor once it is deleted
-        self.garden.remove_tile_from_stack(self.cursor.position.row,self.cursor.position.col)
-        self.garden.add_tile_to_stack(TileContent(self.cursor.get_current_tile_type(), self.cursor.position))
-    
-    # Come back to this
+        self.garden.get_tile(self.cursor.position).set_tile_type(self.cursor.get_current_tile_type())
+
     def cycle_cursor_tile_type(self):
         # Change what the cursor places in the future
         self.cursor.cycle_tile_type()
         # change the tile at the cursor to the new type
-        self.garden.remove_tile_from_stack(self.cursor.position.row,self.cursor.position.col)
-        self.garden.add_tile_to_stack(TileContent(self.cursor.get_current_tile_type(), self.cursor.position))
+        self.garden.get_tile(self.cursor.position).set_tile_type(self.cursor.get_current_tile_type())
 
     def get_garden(self):
         return self.garden

@@ -1,10 +1,11 @@
-import random
 import pyxel
 
 from Model.main import Model
-from Model.main import TileContent
-from Model.main import Garden
+from Model.main import Tile
 from Model.main import Cursor
+from const import TileType
+
+
 
 class View:
     def __init__(self):
@@ -17,36 +18,33 @@ class View:
         self.tile_row_length = 16
         self.tile_col_length = 8
 
+        self.tile_renderers = {
+            TileType.GRASS: self.render_grass_tile,
+            TileType.DIRT: self.render_dirt_tile,
+            TileType.WATER: self.render_water_tile,
+        }
+
     def update(self): # view update doesn't actually render anything, just necessary for INTERNAL VIEW LOGIC
         pass
 
     def render(self, model: Model): # this is the only function that actually renders things. Renders state based on internal logic of the view code (processed by the view update)
         pyxel.dither(1)
-        pyxel.cls(7)
+        pyxel.cls(0)
         render_list = self.collect_renderables(model)
         
         render_list.sort(key=lambda item: (item.position.row, item.position.col, item.position.height))
 
         for element in render_list:
-            if isinstance(element, TileContent):
+            if isinstance(element, Tile):
                 self.render_tile(element)
             elif isinstance(element, Cursor):
                 self.render_cursor(element)
-        
-
-        
-
-
-
     
-    def render_tile(self, tile: TileContent):
+    def render_tile(self, tile: Tile):
         x, y = self.calc_xy(self.origin_x, self.origin_y,tile.position.row, tile.position.col,tile.position.height)
 
-        if tile.get_type() == 'g':
-            self.render_grass_tile(x, y)
-        if tile.get_type() == 'd':
-            self.render_dirt_tile(x, y)
-
+        render_func = self.tile_renderers.get(tile.get_type(), lambda x, y: None)
+        render_func(x, y)
     def render_cursor(self, cursor: Cursor):
         x, y = self.calc_xy(self.origin_x, self.origin_y,cursor.position.row, cursor.position.col,cursor.position.height)
         pyxel.blt(x, y, 0, 64, 0, 32, 32, 8)
@@ -71,6 +69,9 @@ class View:
 
     def render_dirt_tile(self,x,y):
         pyxel.blt(x, y, 0, 32, 0, 32, 32, 8)
+    
+    def render_water_tile(self,x,y):
+        pyxel.blt(x, y, 0, 0, 64, 32, 32, 8)
 
         # Helper to translate row/col/height to x/y for rendering
     def calc_xy(self, origin_x, origin_y, row, col, height):
