@@ -145,6 +145,7 @@ class Model:
     def __init__(self):
         self.garden = Garden()
         self.cursor = Cursor(self.garden)
+        self.frame = 0
 
     # move the cursor by drow and dcol with the tile that was at the cursor's position
     def move_cursor(self, drow: int, dcol: int):

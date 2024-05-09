@@ -28,5 +28,10 @@ class Controller:
         if pyxel.btnp(pyxel.KEY_R):
             self.model.reset_garden()
 
+        # increase the frame
+        self.model.frame += 1
+
+
+
     def draw(self): # executed each frame
         self.view.render(self.model) # executed each frame

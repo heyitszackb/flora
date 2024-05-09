@@ -1,5 +1,9 @@
 # Thought: Switch to a 16x16 tile design for simplicity and cuteness?
 
+# I really need a way to save and load past creations
+
+# Add waterfall animation for water blocks
+
 # New goals:
 
 # Add grass growing slowly over time, randomly, to simulate an evolving environment.

@@ -7,7 +7,7 @@ from const import TileType
 
 class View:
     def __init__(self):
-        pyxel.init(200, 200)
+        pyxel.init(200, 200, fps=100)
         pyxel.load("../flora.pyxres")
         self.origin_x = 90
         self.origin_y = 80
@@ -28,21 +28,23 @@ class View:
 
     def render(self, model: Model):
         pyxel.cls(6) # bg color
+        frame = model.frame
+        pyxel.text(0, 0, f"Frame: {model.frame}", 0)
         render_list = self.collect_renderables(model)
         
         render_list.sort(key=lambda item: (item.position.row, item.position.col, item.position.height, ))
 
         for element in render_list:
             if isinstance(element, Tile):
-                self.render_tile(element)
+                self.render_tile(element, frame)
             elif isinstance(element, Cursor):
                 self.render_cursor(element)
     
-    def render_tile(self, tile: Tile):
+    def render_tile(self, tile: Tile, frame: int):
         x, y = self.calc_xy(self.origin_x, self.origin_y,tile.position.row, tile.position.col,tile.position.height)
 
-        render_func = self.tile_renderers.get(tile.get_type(), lambda x, y: None)
-        render_func(x, y)
+        render_func = self.tile_renderers.get(tile.get_type(), lambda x, y, frame: None)
+        render_func(x, y, frame)
     def render_cursor(self, cursor: Cursor):
         x, y = self.calc_xy(self.origin_x, self.origin_y,cursor.position.row, cursor.position.col,cursor.position.height)
         pyxel.blt(x, y, 2, 48, 0, 16, 16, 0)
@@ -62,15 +64,26 @@ class View:
 
         return renderables
 
-    def render_grass_tile(self,x,y):
+    def render_grass_tile(self,x,y, frame: int):
         pyxel.blt(x, y, 2, 0, 0, 16, 16, 0)
 
-    def render_dirt_tile(self,x,y):
+    def render_dirt_tile(self,x,y, frame: int):
         pyxel.blt(x, y, 2, 16, 0, 16, 16, 0)
     
-    def render_water_tile(self,x,y):
-        pyxel.blt(x, y, 2, 32, 0, 16, 16, 0)
-
+    def render_water_tile(self, x, y, frame: int):
+        frame_interval = pyxel.frame_count % 60
+        if 0 <= frame_interval < 12:
+            pyxel.blt(x, y, 2, 0, 16, 16, 16, 0)
+        if 12 <= frame_interval < 24:
+            pyxel.blt(x, y, 2, 16, 16, 16, 16, 0)
+        elif 24 <= frame_interval < 36:
+            pyxel.blt(x, y, 2, 32, 16, 16, 16, 0)
+        elif 36 <= frame_interval < 48:
+            # Add your blt for this interval
+            pyxel.blt(x, y, 2, 48, 16, 16, 16, 0)  # Assuming 48, 16 is the next sprite
+        elif 48 <= frame_interval < 60:
+            # Add your blt for this interval
+            pyxel.blt(x, y, 2, 64, 16, 16, 16, 0)
         # Helper to translate row/col/height to x/y for rendering
     def calc_xy(self, origin_x, origin_y, row, col, height):
         '''
