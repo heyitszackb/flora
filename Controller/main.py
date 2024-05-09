@@ -12,13 +12,13 @@ class Controller:
 
     def update(self): # executed each frame
         if pyxel.btnp(pyxel.KEY_RIGHT):
-            self.model.move_cursor_with_tile(0,1)
+            self.model.move_cursor(0,1)
         if pyxel.btnp(pyxel.KEY_LEFT):
-            self.model.move_cursor_with_tile(0,-1)
+            self.model.move_cursor(0,-1)
         if pyxel.btnp(pyxel.KEY_DOWN):
-            self.model.move_cursor_with_tile(1,0)
+            self.model.move_cursor(1,0)
         if pyxel.btnp(pyxel.KEY_UP):
-            self.model.move_cursor_with_tile(-1,0)
+            self.model.move_cursor(-1,0)
         if pyxel.btnp(pyxel.KEY_RETURN):
             self.model.place_tile_at_cursor()
         if pyxel.btnp(pyxel.KEY_BACKSPACE):
