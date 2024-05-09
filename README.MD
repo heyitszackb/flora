@@ -1,8 +1,10 @@
 # New goals:
 
-# Add frames to the model and try to add one thing of animation to the view.
-
 # Add grass growing slowly over time, randomly, to simulate an evolving environment.
+
+# Swap tileset.
+
+# Add frames to the model and try to add one thing of animation to the view.
 
 # Think about data structure that is holding the tiles. I could potentially refactor it to make expanding better. But also, it is nice to have it simple.
 

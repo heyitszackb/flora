@@ -12,7 +12,7 @@ class View:
         self.origin_x = 80
         self.origin_y = 60
 
-        self.tile_height = 10
+        self.tile_height = 8
         self.tile_row_length = 16
         self.tile_col_length = 8
 
@@ -26,7 +26,7 @@ class View:
         pass
 
     def render(self, model: Model): # this is the only function that actually renders things. Renders state based on internal logic of the view code (processed by the view update)
-        pyxel.cls(0)
+        pyxel.cls(6) # bg color
         render_list = self.collect_renderables(model)
         
         render_list.sort(key=lambda item: (item.position.row, item.position.col, item.position.height))
@@ -62,10 +62,10 @@ class View:
         return renderables
 
     def render_grass_tile(self,x,y):
-        pyxel.blt(x, y, 0, 0, 0, 32, 32, 8)
+        pyxel.blt(x, y, 1, 0, 0, 32, 32, 0)
 
     def render_dirt_tile(self,x,y):
-        pyxel.blt(x, y, 0, 32, 0, 32, 32, 8)
+        pyxel.blt(x, y, 1, 32, 0, 32, 32, 0)
     
     def render_water_tile(self,x,y):
         pyxel.blt(x, y, 0, 0, 64, 32, 32, 8)

@@ -14,8 +14,6 @@ class Position:
     def get_new_moved_position(self, drow=0, dcol=0, dheight=0):
         return Position(self.row + drow, self.col + dcol, self.height + dheight)
 
-
-
     def move(self, drow, dcol, dheight):
         self.row += drow
         self.col += dcol
