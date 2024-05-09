@@ -1,3 +1,5 @@
+# Thought: Switch to a 16x16 tile design for simplicity and cuteness?
+
 # New goals:
 
 # Add grass growing slowly over time, randomly, to simulate an evolving environment.

@@ -48,7 +48,7 @@ class Garden:
     def __init__(self, size=5):
         self.tiles = [[[Tile(Position(row, col, 0))] for col in range(size)] for row in range(size)]
         self.size = size
-        self.height_limit = 5
+        self.height_limit = 10
         self.depth_limit = 0
 
     def get_height_limit(self):

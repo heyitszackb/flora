@@ -12,9 +12,9 @@ class View:
         self.origin_x = 80
         self.origin_y = 60
 
-        self.tile_height = 8
-        self.tile_row_length = 16
-        self.tile_col_length = 8
+        self.tile_height = 5 # 8 
+        self.tile_row_length = 8 # 16
+        self.tile_col_length = 4 # 8
 
         self.tile_renderers = {
             TileType.GRASS: self.render_grass_tile,
@@ -44,7 +44,7 @@ class View:
         render_func(x, y)
     def render_cursor(self, cursor: Cursor):
         x, y = self.calc_xy(self.origin_x, self.origin_y,cursor.position.row, cursor.position.col,cursor.position.height)
-        pyxel.blt(x, y, 0, 64, 0, 32, 32, 8)
+        pyxel.blt(x, y, 2, 48, 0, 16, 16, 0)
     
     # Add every render-able thing to the list
     def collect_renderables(self, model: Model):
@@ -62,13 +62,13 @@ class View:
         return renderables
 
     def render_grass_tile(self,x,y):
-        pyxel.blt(x, y, 1, 0, 0, 32, 32, 0)
+        pyxel.blt(x, y, 2, 0, 0, 16, 16, 0)
 
     def render_dirt_tile(self,x,y):
-        pyxel.blt(x, y, 1, 32, 0, 32, 32, 0)
+        pyxel.blt(x, y, 2, 16, 0, 16, 16, 0)
     
     def render_water_tile(self,x,y):
-        pyxel.blt(x, y, 0, 0, 64, 32, 32, 8)
+        pyxel.blt(x, y, 2, 32, 0, 16, 16, 0)
 
         # Helper to translate row/col/height to x/y for rendering
     def calc_xy(self, origin_x, origin_y, row, col, height):
