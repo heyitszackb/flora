@@ -1,12 +1,6 @@
-# FIX the position logic and move to Position - should NOT be in cursor at all.
+# Add frames to the model and try to add one thing of animation to the view.
 
 # Think about data structure that is holding the tiles. I could potentially refactor it to make expanding better. But also, it is nice to have it simple.
-
-# Check to make sure each class actually has things that only that class needs and nothing else
-
-# TODO: Position move function doesn't really do anything...but should probably handle position related logic.
-
-# Add "r" to reset the garden
 
 # TODO: Understand how the render_list sorting works. Can I modify to understand it better?
 

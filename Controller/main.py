@@ -25,6 +25,8 @@ class Controller:
             self.model.delete_tile_at_cursor()
         if pyxel.btnp(pyxel.KEY_SPACE):
             self.model.cycle_cursor_tile_type()
+        if pyxel.btnp(pyxel.KEY_R):
+            self.model.reset_garden()
 
     def draw(self): # executed each frame
         self.view.render(self.model) # executed each frame

@@ -40,6 +40,7 @@ class Tile:
 class Garden:
     def __init__(self, size=5):
         self.tiles = [[[Tile(Position(row, col, 0))] for col in range(size)] for row in range(size)]
+        self.size = size
         self.height_limit = 5
         self.depth_limit = 0
 
@@ -49,7 +50,6 @@ class Garden:
     def get_depth_limit(self):
         return self.depth_limit
     
-    # Needs to be fixed - the information is duplicated in the tile itself and then in the row/col...
     def add_tile_to_stack(self, tile: Tile):
         self.tiles[tile.position.row][tile.position.col].append(tile)
     
@@ -87,9 +87,14 @@ class Garden:
                     self.add_tile_to_stack(new_tile)
                     current_stack_height += 1
     
+    def reset_garden(self):
+        # delete all tiles and reset the garden to its original state
+        self.tiles = [[[Tile(Position(row, col, 0))] for col in range(self.size)] for row in range(self.size)]
+
+    
 class Cursor:
     # garden is the garden to which this cursor is attached
-    def __init__(self, garden: Garden, start_row=1, start_col=0, start_height=0):
+    def __init__(self, garden: Garden, start_row=0, start_col=0, start_height=0):
         self.garden = garden
         self.position = Position(start_row, start_col, start_height)
         self.current_type = TileType.GRASS
@@ -178,6 +183,16 @@ class Model:
         self.cursor.cycle_tile_type()
         # change the tile at the cursor to the new type
         self.garden.get_tile(self.cursor.position).set_tile_type(self.cursor.get_current_tile_type())
+
+    def reset_garden(self):
+        # Reset the garden
+        self.garden.reset_garden()
+
+        # reset the cursor position
+        self.cursor.position.set_position(0,0,0)
+        # reset the cursor tile type
+        self.cursor.set_current_tile_type(TileType.GRASS)
+
 
     def get_garden(self):
         return self.garden
