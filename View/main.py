@@ -9,12 +9,12 @@ class View:
     def __init__(self):
         pyxel.init(200, 200)
         pyxel.load("../flora.pyxres")
-        self.origin_x = 80
-        self.origin_y = 60
+        self.origin_x = 90
+        self.origin_y = 80
 
-        self.tile_height = 5 # 8 
-        self.tile_row_length = 8 # 16
-        self.tile_col_length = 4 # 8
+        self.tile_height = 5 # offset to avoid confusing "M.C. Escher" overlap
+        self.tile_row_length = 8
+        self.tile_col_length = 4
 
         self.tile_renderers = {
             TileType.GRASS: self.render_grass_tile,
@@ -22,14 +22,15 @@ class View:
             TileType.WATER: self.render_water_tile,
         }
 
-    def update(self): # view update doesn't actually render anything, just necessary for INTERNAL VIEW LOGIC
+    # For future animation
+    def update(self):
         pass
 
-    def render(self, model: Model): # this is the only function that actually renders things. Renders state based on internal logic of the view code (processed by the view update)
+    def render(self, model: Model):
         pyxel.cls(6) # bg color
         render_list = self.collect_renderables(model)
         
-        render_list.sort(key=lambda item: (item.position.row, item.position.col, item.position.height))
+        render_list.sort(key=lambda item: (item.position.row, item.position.col, item.position.height, ))
 
         for element in render_list:
             if isinstance(element, Tile):
