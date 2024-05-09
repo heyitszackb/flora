@@ -5,8 +5,6 @@ from Model.main import Tile
 from Model.main import Cursor
 from const import TileType
 
-
-
 class View:
     def __init__(self):
         pyxel.init(200, 200)

@@ -1,8 +1,5 @@
 # New goals:
 
-A "flat" cursor (nothing showing).
-When a grass block is placed, there should be dirt under it
-
 # Add frames to the model and try to add one thing of animation to the view.
 
 # Add grass growing slowly over time, randomly, to simulate an evolving environment.

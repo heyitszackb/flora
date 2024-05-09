@@ -108,9 +108,6 @@ class Cursor:
     def cycle_tile_type(self):
         # cycle between g, d, and w
         if self.current_type == TileType.GRASS:
-            self.current_type = TileType.DIRT
-        
-        elif self.current_type == TileType.DIRT:
             self.current_type = TileType.WATER
         
         elif self.current_type == TileType.WATER:
@@ -150,6 +147,12 @@ class Model:
     def place_tile_at_cursor(self):
         if self.cursor.position.height >= self.garden.get_height_limit():
             return
+        
+        if self.cursor.get_current_tile_type() == TileType.GRASS and self.cursor.position.height != 0:
+            if self.garden.get_tile(Position(self.cursor.position.row, self.cursor.position.col, self.cursor.position.height - 1)).get_type() == TileType.GRASS:
+                # change it to dirt
+                self.garden.get_tile(Position(self.cursor.position.row, self.cursor.position.col, self.cursor.position.height - 1)).set_tile_type(TileType.DIRT)
+            
         # I do not like this line, but I need to create a new position in order to eliminate some awful bugs with shared positions
         self.garden.add_tile_to_stack(Tile(Position(self.cursor.position.row, self.cursor.position.col, self.cursor.position.height), self.cursor.get_current_tile_type()))
         # Move up the cursor
@@ -160,10 +163,19 @@ class Model:
         # If we are on the bottom layer, we don't delete the tile
         if self.cursor.position.height <= self.garden.depth_limit:
             return
-        # Remove the tile at the location of the cursor
+        
+         # Remove the tile at the location of the cursor
         self.garden.remove_tile_from_stack(self.cursor.position.row,self.cursor.position.col)
+
         # move the cursor down in height
         self.cursor.move(0,0,-1)
+        
+        # When I delete a grass tile, if the tile under the cursor is dirt, it should be changed to grass.
+        if self.cursor.position.height != 0:
+            if self.garden.get_tile(Position(self.cursor.position.row, self.cursor.position.col, self.cursor.position.height - 1)).get_type() == TileType.DIRT:
+                # change it to grass
+                self.garden.get_tile(Position(self.cursor.position.row, self.cursor.position.col, self.cursor.position.height - 1)).set_tile_type(TileType.GRASS)
+
 
     def cycle_cursor_tile_type(self):
         # Change what the cursor places in the future
@@ -175,7 +187,7 @@ class Model:
         self.garden.reset_garden()
 
         # reset the cursor position
-        self.cursor.position.set_position(0,0,0)
+        self.cursor.position.set_position(0,0,1)
         # reset the cursor tile type
         self.cursor.set_current_tile_type(TileType.GRASS)
 
