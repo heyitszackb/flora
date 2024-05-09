@@ -7,6 +7,15 @@ class Position:
         self.col = col
         self.height = height
 
+    # returns a NEW position object that can be used elsewhere.
+    def get_new_position(self):
+        return Position(self.row, self.col, self.height)
+    
+    def get_new_moved_position(self, drow=0, dcol=0, dheight=0):
+        return Position(self.row + drow, self.col + dcol, self.height + dheight)
+
+
+
     def move(self, drow, dcol, dheight):
         self.row += drow
         self.col += dcol
@@ -53,11 +62,12 @@ class Garden:
     def add_tile_to_stack(self, tile: Tile):
         self.tiles[tile.position.row][tile.position.col].append(tile)
     
-    def remove_tile_from_stack(self, row: int, col: int):
+    # takes a position object for simplicity - does nothing with the height information.
+    def remove_tile_from_stack(self, position: Position):
         # If there is nothing in the stack, do nothing
-        if len(self.tiles[row][col]) == 0:
+        if len(self.tiles[position.row][position.col]) == 0:
             return
-        self.tiles[row][col].pop()
+        self.tiles[position.row][position.col].pop()
 
     def get_tile(self, position: Position):
         return self.tiles[position.row][position.col][position.height]
@@ -149,12 +159,12 @@ class Model:
             return
         
         if self.cursor.get_current_tile_type() == TileType.GRASS and self.cursor.position.height != 0:
-            if self.garden.get_tile(Position(self.cursor.position.row, self.cursor.position.col, self.cursor.position.height - 1)).get_type() == TileType.GRASS:
+            if self.garden.get_tile(self.cursor.position.get_new_moved_position(dheight=-1)).get_type() == TileType.GRASS:
                 # change it to dirt
-                self.garden.get_tile(Position(self.cursor.position.row, self.cursor.position.col, self.cursor.position.height - 1)).set_tile_type(TileType.DIRT)
+                self.garden.get_tile(self.cursor.position.get_new_moved_position(dheight=-1)).set_tile_type(TileType.DIRT)
             
         # I do not like this line, but I need to create a new position in order to eliminate some awful bugs with shared positions
-        self.garden.add_tile_to_stack(Tile(Position(self.cursor.position.row, self.cursor.position.col, self.cursor.position.height), self.cursor.get_current_tile_type()))
+        self.garden.add_tile_to_stack(Tile(self.cursor.position.get_new_position(), self.cursor.get_current_tile_type()))
         # Move up the cursor
         self.cursor.move(0,0,1)
         
@@ -165,16 +175,16 @@ class Model:
             return
         
          # Remove the tile at the location of the cursor
-        self.garden.remove_tile_from_stack(self.cursor.position.row,self.cursor.position.col)
+        self.garden.remove_tile_from_stack(self.cursor.position.get_new_position())
 
         # move the cursor down in height
         self.cursor.move(0,0,-1)
         
         # When I delete a grass tile, if the tile under the cursor is dirt, it should be changed to grass.
         if self.cursor.position.height != 0:
-            if self.garden.get_tile(Position(self.cursor.position.row, self.cursor.position.col, self.cursor.position.height - 1)).get_type() == TileType.DIRT:
+            if self.garden.get_tile(self.cursor.position.get_new_moved_position(dheight=-1)).get_type() == TileType.DIRT:
                 # change it to grass
-                self.garden.get_tile(Position(self.cursor.position.row, self.cursor.position.col, self.cursor.position.height - 1)).set_tile_type(TileType.GRASS)
+                self.garden.get_tile(self.cursor.position.get_new_moved_position(dheight=-1)).set_tile_type(TileType.GRASS)
 
 
     def cycle_cursor_tile_type(self):
