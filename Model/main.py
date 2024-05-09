@@ -7,6 +7,22 @@ class Position:
         self.col = col
         self.height = height
 
+    def move(self, drow, dcol, dheight):
+        self.row += drow
+        self.col += dcol
+        self.height += dheight
+    
+    def set_position(self, row, col, height):
+        self.row = row
+        self.col = col
+        self.height = height
+
+    #Establishes boundaries for the position
+    def clamp(self, max_row, max_col, max_height):
+        self.row = max(0, min(max_row, self.row))
+        self.col = max(0, min(max_col, self.col))
+        self.height = max(0, min(max_height, self.height))
+
 class Tile:
     def __init__(self, position=None, tile_type=TileType.GRASS):
         self.tile_type = tile_type
@@ -95,42 +111,21 @@ class Cursor:
         elif self.current_type == TileType.WATER:
             self.current_type = TileType.GRASS
 
+    def move(self, drow, dcol, dheight):
+        self.position.move(drow, dcol, dheight)
 
-    # Relative to current position: Positive is up, negative is down
-    def move_height(self, dheight):
-        self.set_position(self.position.row, self.position.col, self.position.height + dheight)
-
-    # Relative to current position: Positive is increasingm rows, negative is decreasing rows
-    def move_row(self, drow):
-        self.set_position(self.position.row + drow, self.position.col, self.position.height)
-
-    # Relative to current position: Positive is increasingm cols, negative is decreasing cols
-    def move_col(self, dcol):
-        self.set_position(self.position.row, self.position.col + dcol, self.position.height)
-
-    # Set position is what does all boundary checking for this function
-    def set_position(self, row, col, height):
         max_row = len(self.garden.get_tiles()) - 1
-        min_row = 0
         max_col = len(self.garden.get_tiles()[0]) - 1
-        min_col = 0
         max_height = self.garden.get_height_limit()
-        min_height = self.garden.get_depth_limit()
 
-        clamped_row = max(min_row, min(max_row, row))
-        clamped_col = max(min_col, min(max_col, col))
-        clamped_height = max(min_height, min(max_height, height))
-        
-        self.position.row = clamped_row
-        self.position.col = clamped_col
-        self.position.height = clamped_height
+        self.position.clamp(max_row, max_col, max_height)
         
     def get_position(self):
         return self.position
 
     def move_to_top_of_stack(self):
         top = len(self.garden.get_stack(self.position.row, self.position.col))
-        self.set_position(self.position.row, self.position.col, top)
+        self.position.set_position(self.position.row, self.position.col, top)
 
     def __str__(self):
         return f"Cursor at {self.position}"
@@ -144,8 +139,7 @@ class Model:
     # move the cursor by drow and dcol with the tile that was at the cursor's position
     def move_cursor_with_tile(self, drow: int, dcol: int):
         self.garden.remove_tile_from_stack(self.cursor.position.row,self.cursor.position.col)
-        self.cursor.move_row(drow)
-        self.cursor.move_col(dcol)
+        self.cursor.move(drow, dcol, 0)
         self.cursor.move_to_top_of_stack()
         # I do not like this line, but I need to create a new position in order to eliminate some awful bugs with shared positions
         self.garden.add_tile_to_stack(Tile(Position(self.cursor.position.row, self.cursor.position.col, self.cursor.position.height), self.cursor.get_current_tile_type()))
@@ -153,7 +147,7 @@ class Model:
 
     def set_cursor_with_tile(self, row, col):
         self.garden.remove_tile_from_stack(self.cursor.position.row,self.cursor.position.col)
-        self.cursor.set_position(row, col, 0)
+        self.cursor.position.set_position(row, col, 0)
         self.cursor.move_to_top_of_stack()
         self.garden.add_tile_to_stack(Tile(Position(self.cursor.position.row, self.cursor.position.col, self.cursor.position.height), self.cursor.get_current_tile_type()))
 
@@ -162,7 +156,7 @@ class Model:
         if self.cursor.position.height >= self.garden.get_height_limit():
             return
         # Move up the cursor
-        self.cursor.move_height(1)
+        self.cursor.move(0,0,1)
         # Add a tile at the cursor's new position
         # I do not like this line, but I need to create a new position in order to eliminate some awful bugs with shared positions
         self.garden.add_tile_to_stack(Tile(Position(self.cursor.position.row, self.cursor.position.col, self.cursor.position.height), self.cursor.get_current_tile_type()))
@@ -175,7 +169,7 @@ class Model:
         # Remove the tile at the location of the cursor
         self.garden.remove_tile_from_stack(self.cursor.position.row,self.cursor.position.col)
         # move the cursor down in height
-        self.cursor.move_height(-1)
+        self.cursor.move(0,0,-1)
         # the tile that was below the cursor should now be the same type as the cursor once it is deleted
         self.garden.get_tile(self.cursor.position).set_tile_type(self.cursor.get_current_tile_type())
 

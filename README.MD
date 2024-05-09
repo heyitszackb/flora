@@ -25,10 +25,4 @@ dx is x difference
 xy is y difference
 
 MOVE implies relative
-e.g. move_cursor_with_tile
 SET implies placing at coords, regardless of current position
-e.g. set_cursor_with_tile
-
-Another example:
-def move_col(self, dcol):
-self.set_position(self.position.row, self.position.col + dcol, self.position.height)

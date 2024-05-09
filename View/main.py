@@ -28,7 +28,6 @@ class View:
         pass
 
     def render(self, model: Model): # this is the only function that actually renders things. Renders state based on internal logic of the view code (processed by the view update)
-        pyxel.dither(1)
         pyxel.cls(0)
         render_list = self.collect_renderables(model)
         
