@@ -34,6 +34,8 @@ class Tile:
     def __init__(self, position=None, tile_type=TileType.GRASS):
         self.tile_type = tile_type
         self.position = position if position else Position()
+        self.is_strawberry_patch = False
+        self.is_lily_pad = False
 
     def set_tile_type(self, tile_type: TileType):
         self.tile_type = tile_type
@@ -43,6 +45,7 @@ class Tile:
 
     def __str__(self):
         return f"{self.tile_type} at {self.position}"
+
 
 class Garden:
     def __init__(self, size=5):
@@ -106,6 +109,12 @@ class Cursor:
         self.garden = garden
         self.position = Position(start_row, start_col, start_height)
         self.current_type = TileType.GRASS
+        self.current_num_frames_in_error_state = 0
+        self.total_error_state_frames = 30
+        self.in_error_state = False
+
+    def set_error_state(self, error_state):
+        self.in_error_state = error_state
 
     def get_current_tile_type(self):
         return self.current_type
@@ -146,6 +155,33 @@ class Model:
         self.garden = Garden()
         self.cursor = Cursor(self.garden)
         self.frame = 0
+    
+    # runs each frame, is responsible for handling frame-by-frame model updates
+    def update(self):
+
+
+        # Update the error state of the cursor at each frame
+        if self.cursor.in_error_state:
+            self.cursor.current_num_frames_in_error_state += 1
+            print(self.cursor.current_num_frames_in_error_state)
+            if self.cursor.current_num_frames_in_error_state >= self.cursor.total_error_state_frames:
+                self.cursor.current_num_frames_in_error_state = 0
+                self.cursor.set_error_state(False)
+
+
+        # there is a small chance that one of the grass tiles turns into a strawberry patch
+        for row in self.garden.get_tiles():
+            for stack in row:
+                for tile in stack:
+                    # if the tile is grass, there is a chance to have a strawberry patch
+                    if tile.get_type() == TileType.GRASS and random.random() < 0.00002:
+                        tile.is_strawberry_patch = True
+                    
+                    # If the tile is water and on the first layer, there is a chance to have a lily pad
+                    if tile.get_type() == TileType.WATER and random.random() < 0.0002:
+                        tile.is_lily_pad = True
+
+
 
     # move the cursor by drow and dcol with the tile that was at the cursor's position
     def move_cursor(self, drow: int, dcol: int):
@@ -154,9 +190,19 @@ class Model:
 
     # Places a tile a the cursor's position with the cursor's tile type
     def place_tile_at_cursor(self):
+        # We can't build outside of the garden
         if self.cursor.position.height >= self.garden.get_height_limit():
+            self.cursor.set_error_state(True)
             return
         
+        # We can't place a grass tile on top of a water tile if we aren't placing water too
+        if self.cursor.get_current_tile_type() != TileType.WATER and self.cursor.position.height != 0:
+            if self.garden.get_tile(self.cursor.position.get_new_moved_position(dheight=-1)).get_type() == TileType.WATER:
+                self.cursor.set_error_state(True)
+                return
+            
+        
+        # If the tile is grass and the tile under it is grass, change it to dirt
         if self.cursor.get_current_tile_type() == TileType.GRASS and self.cursor.position.height != 0:
             if self.garden.get_tile(self.cursor.position.get_new_moved_position(dheight=-1)).get_type() == TileType.GRASS:
                 # change it to dirt
@@ -171,6 +217,7 @@ class Model:
     def delete_tile_at_cursor(self):
         # If we are on the bottom layer, we don't delete the tile
         if self.cursor.position.height <= self.garden.depth_limit:
+            self.cursor.set_error_state(True)
             return
         
          # Remove the tile at the location of the cursor

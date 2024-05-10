@@ -30,6 +30,7 @@ class Controller:
 
         # increase the frame
         self.model.frame += 1
+        self.model.update()
 
 
 

@@ -43,11 +43,14 @@ class View:
     def render_tile(self, tile: Tile, frame: int):
         x, y = self.calc_xy(self.origin_x, self.origin_y,tile.position.row, tile.position.col,tile.position.height)
 
-        render_func = self.tile_renderers.get(tile.get_type(), lambda x, y, frame: None)
-        render_func(x, y, frame)
+        render_func = self.tile_renderers.get(tile.get_type(), lambda x, y, frame, tile: None)
+        render_func(x, y, frame, tile)
     def render_cursor(self, cursor: Cursor):
         x, y = self.calc_xy(self.origin_x, self.origin_y,cursor.position.row, cursor.position.col,cursor.position.height)
-        pyxel.blt(x, y, 2, 48, 0, 16, 16, 0)
+        if cursor.in_error_state:
+            pyxel.blt(x, y, 2, 64, 0, 16, 16, 0)
+        else:
+            pyxel.blt(x, y, 2, 48, 0, 16, 16, 0)
     
     # Add every render-able thing to the list
     def collect_renderables(self, model: Model):
@@ -64,13 +67,17 @@ class View:
 
         return renderables
 
-    def render_grass_tile(self,x,y, frame: int):
+    def render_grass_tile(self,x,y, frame: int, tile: Tile):
         pyxel.blt(x, y, 2, 0, 0, 16, 16, 0)
+        if tile.is_strawberry_patch:
+            pyxel.blt(x, y, 2, 0, 48, 16, 16, 0)
 
-    def render_dirt_tile(self,x,y, frame: int):
+    def render_dirt_tile(self,x,y, frame: int, tile: Tile):
         pyxel.blt(x, y, 2, 16, 0, 16, 16, 0)
     
-    def render_water_tile(self, x, y, frame: int):
+    def render_water_tile(self, x, y, frame: int, tile: Tile):
+
+
         frame_interval = pyxel.frame_count % 60
         if 0 <= frame_interval < 12:
             pyxel.blt(x, y, 2, 0, 16, 16, 16, 0)
@@ -84,7 +91,12 @@ class View:
         elif 48 <= frame_interval < 60:
             # Add your blt for this interval
             pyxel.blt(x, y, 2, 64, 16, 16, 16, 0)
-        # Helper to translate row/col/height to x/y for rendering
+    
+        # lily pad
+        if tile.is_lily_pad:
+            pyxel.blt(x, y, 2, 0, 64, 16, 16, 0)
+        
+    # Helper to translate row/col/height to x/y for rendering
     def calc_xy(self, origin_x, origin_y, row, col, height):
         '''
         (x,y)
