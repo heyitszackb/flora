@@ -78,6 +78,12 @@ Done
 
 # TODO: Add rotation of the entire table
 
+# Have a tutorial
+
+# Far future: City version
+
+# Perhaps should primarily be an art/zen/relaxation/creative outlet. Can add other game modes on top for fun.
+
 # Can have an arcade mode where two people are trying to be the most creative with the given prompt
 
 # Terminology
