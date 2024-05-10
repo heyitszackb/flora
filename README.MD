@@ -6,7 +6,10 @@ Every frame should be a peice of art from beginning to end.
 
 Thoughts: Focus on core mechanics and build out from there. I shouldn't spend my time doing random things all the time trying to make things work.
 
+# NEXT UP
+
 Review following changes for clean code refactor:
+(TODO: need to clear if tile is placed on top of them)
 strawberry patch
 lily pads
 
@@ -16,15 +19,9 @@ update function in model
 
 place_tile_at_cursor additions
 
-# Thought: Switch to a 16x16 tile design for simplicity and cuteness?
-
 # Currently, all time-based things are based on frames (error checking, etc).
 
-# Add blinking cursor when error
-
 I feel like this could be a problem because if something is computationally intensive, it might slow everything down...
-
-# Grass/dirt should not be able to be placed on a water tile. If the user tries, the cursor should blink to let them know or something.
 
 # Add view for current tile that is being placed from the cursor
 
