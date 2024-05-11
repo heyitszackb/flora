@@ -34,8 +34,6 @@ class Tile:
     def __init__(self, position=None, tile_type=TileType.GRASS):
         self.tile_type = tile_type
         self.position = position if position else Position()
-        self.is_strawberry_patch = False
-        self.is_lily_pad = False
 
     def set_tile_type(self, tile_type: TileType):
         self.tile_type = tile_type
@@ -158,8 +156,6 @@ class Model:
     
     # runs each frame, is responsible for handling frame-by-frame model updates
     def update(self):
-
-
         # Update the error state of the cursor at each frame
         if self.cursor.in_error_state:
             self.cursor.current_num_frames_in_error_state += 1
@@ -167,21 +163,6 @@ class Model:
             if self.cursor.current_num_frames_in_error_state >= self.cursor.total_error_state_frames:
                 self.cursor.current_num_frames_in_error_state = 0
                 self.cursor.set_error_state(False)
-
-
-        # there is a small chance that one of the grass tiles turns into a strawberry patch
-        for row in self.garden.get_tiles():
-            for stack in row:
-                for tile in stack:
-                    # if the tile is grass, there is a chance to have a strawberry patch
-                    if tile.get_type() == TileType.GRASS and random.random() < 0.00002:
-                        tile.is_strawberry_patch = True
-                    
-                    # If the tile is water and on the first layer, there is a chance to have a lily pad
-                    if tile.get_type() == TileType.WATER and random.random() < 0.0002:
-                        tile.is_lily_pad = True
-
-
 
     # move the cursor by drow and dcol with the tile that was at the cursor's position
     def move_cursor(self, drow: int, dcol: int):

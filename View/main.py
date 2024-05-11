@@ -69,8 +69,6 @@ class View:
 
     def render_grass_tile(self,x,y, frame: int, tile: Tile):
         pyxel.blt(x, y, 2, 0, 0, 16, 16, 0)
-        if tile.is_strawberry_patch:
-            pyxel.blt(x, y, 2, 0, 48, 16, 16, 0)
 
     def render_dirt_tile(self,x,y, frame: int, tile: Tile):
         pyxel.blt(x, y, 2, 16, 0, 16, 16, 0)
@@ -91,10 +89,6 @@ class View:
         elif 48 <= frame_interval < 60:
             # Add your blt for this interval
             pyxel.blt(x, y, 2, 64, 16, 16, 16, 0)
-    
-        # lily pad
-        if tile.is_lily_pad:
-            pyxel.blt(x, y, 2, 0, 64, 16, 16, 0)
         
     # Helper to translate row/col/height to x/y for rendering
     def calc_xy(self, origin_x, origin_y, row, col, height):

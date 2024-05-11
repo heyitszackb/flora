@@ -19,6 +19,8 @@ update function in model
 
 place_tile_at_cursor additions
 
+Need to optimize user control, simplicity, and beauty.
+
 # Currently, all time-based things are based on frames (error checking, etc).
 
 I feel like this could be a problem because if something is computationally intensive, it might slow everything down...
