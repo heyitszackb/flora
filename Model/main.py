@@ -34,8 +34,8 @@ class Tile:
     def __init__(self, position=None, tile_type=TileType.GRASS):
         self.tile_type = tile_type
         self.position = position if position else Position()
-        self.left_waterfall = False
-        self.right_waterfall = False
+        self.left_waterfall = 0 # the higher the number, the larger the waterfall on that side.
+        self.right_waterfall = 0 # the higher the number, the larger the waterfall on that side.
 
     def set_tile_type(self, tile_type: TileType):
         self.tile_type = tile_type
@@ -63,29 +63,38 @@ class Garden:
             for col in range(self.size):
                 stack = self.get_stack(row, col)
                 for height in range(len(stack)):
-                    # boundary checking
-                    # if row == 0 or col == 0:
-                        # continue
 
                     tile = stack[height]
 
                     # reset so that when we delete water, it will update
-                    tile.right_waterfall = False
-                    tile.left_waterfall = False
-                    # If, for any given water tile, there is a water tile in the row-1,height+1, set left_waterfall property to true
-                    # If, for any given water tile, there is a water tile in the col-1,height+1, set right_waterfall property to true
-                    if tile.get_type() == TileType.WATER:
-                        # If we are lower than the height limit and 
-                        # self.cursor.position.get_new_moved_position(dheight=-1)
-                        
-                        # make sure the stack we are looking for for the contributing water has a height greater than the current height, else we will be checking out of bounds
-                        if len(self.get_stack(row - 1, col)) > height + 1: # +1 means when the water to the right is 1 hight, add waterfall
-                            if height < self.height_limit - 1 and self.get_tile(Position(row - 1, col, height + 1)).get_type() == TileType.WATER:
-                                tile.right_waterfall = True
+                    tile.right_waterfall = 0 # recalculate each time, inefficient but okay for now.
+                    tile.left_waterfall = 0
 
-                        if len(self.get_stack(row, col - 1)) > height + 1: # +1 means when the water to the right is 1 hight, add waterfall
-                            if height < self.height_limit - 1 and self.get_tile(Position(row, col - 1, height + 1)).get_type() == TileType.WATER:
-                                tile.left_waterfall = True
+                if tile.get_type() == TileType.WATER:
+                    num = 1
+                    loop = True
+                    while loop:
+                        if len(self.get_stack(row, col - 1)) > height + num:
+                            if height < self.height_limit - 1 and self.get_tile(Position(row, col - 1, height + num)).get_type() == TileType.WATER:
+                                tile.left_waterfall = num
+                                num += 1
+                            else:
+                                loop = False
+                        else:
+                            loop = False
+                    
+                    num = 1
+                    loop = True
+                    while loop:
+                        if len(self.get_stack(row - 1, col)) > height + num:
+                            if height < self.height_limit - 1 and self.get_tile(Position(row - 1, col, height + num)).get_type() == TileType.WATER:
+                                tile.right_waterfall = num
+                                num += 1
+                            else:
+                                loop = False
+                        else:
+                            loop = False
+                                
                     
     def get_height_limit(self):
         return self.height_limit

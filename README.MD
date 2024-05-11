@@ -10,6 +10,12 @@ An ideal feature addition is a feature that increases simplicity, beauty, or use
 
 ## Current Tasks
 
+-   Make a way to save and load maps. It is easy when you only have water/grass because the program can derive the more complex animations from the base heightmap
+-   Optimize the water calculations to re-calculate only when someone places/delets a block instead of every single frame.
+-   Further beautify water animations by adding height data for water blocks. The lower a water block is, the less streaks/lines there should be.
+-   Add more height step animations for waterfall (base, small, medium, large should all be slightly different). I currently have base and small, but small could be better.
+-   Consider deleting the grid lines for the grass blocks to make it less blocky and more beautiful (should there be an outline on the outside, though?)
+
 -   Add water shorelines on the edges of the water where it meets the land
 
 ## Future Ideas / Backlog
@@ -80,3 +86,4 @@ Tasks are placed here after they are completed.
 -   Refactor view code to move art to 0th image
 -   Remove gridlines from water (increase beauty)
 -   Add basic waterfall visuals
+-   Add advanced waterfall 1/2 height animation change and alter base water texture
