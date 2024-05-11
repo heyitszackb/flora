@@ -12,6 +12,11 @@ An ideal feature addition is a feature that increases simplicity, beauty, or use
 
 ## Future Ideas / Backlog
 
+-   Remove unecessary pyxel art
+-   Refactor view code to move art to 0th image
+-   Remove gridlines from water (increase beauty)
+-   Add splash animation for water (increase beauty)
+
 ### Environment and Animations
 
 -   **Dynamic Environment**:
