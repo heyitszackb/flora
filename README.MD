@@ -10,9 +10,6 @@ An ideal feature addition is a feature that increases simplicity, beauty, or use
 
 ## Current Tasks
 
--   Remove gridlines from water (increase beauty)
--   Add splash animation for water (increase beauty)
-
 ## Future Ideas / Backlog
 
 ### Environment and Animations
@@ -60,11 +57,18 @@ An ideal feature addition is a feature that increases simplicity, beauty, or use
 ## Terminology In Codebase
 
 -   **Movement Terms**:
+
     -   `drow`, `dcol`, `dheight`: Denote differences in row, column, and height respectively. All are ints
     -   `row`, `col`, `height`: Denote a row, column, and height. All are ints.
     -   `dx`, `dy`: Used to denote differences in x and y coordinates. All are ints.
     -   `MOVE`: Implies relative movement.
     -   `SET`: Indicates placing at specific coordinates, regardless of current position.
     -   `update()`: Each class' update method will, by convention of the codebase, be executed each frame.
+        In commits:
+    -   `ADD:` prefix for new feature added
+    -   `REMOVE:` prefix for content removed
+    -   `REFACTOR:` prefix for code refactored
 
----
+## Tasks completed
+
+Tasks are placed here after they are completed.
