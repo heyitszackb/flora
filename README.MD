@@ -1,97 +1,70 @@
-# Core thing:
+# Design Document
 
-The experience should be incredibly intuitive, and incredibly EASY to operate. (like, only 1, MAYBE 2 buttons total)
-The experience should be incredibly beautiful at every single frame (i.e. no complicated graphics of metrics/numbers or clutter).
-Every frame should be a peice of art from beginning to end.
+## Core Philosophy
 
-Thoughts: Focus on core mechanics and build out from there. I shouldn't spend my time doing random things all the time trying to make things work.
+-   **Simple**: The experience should be incredibly easy to operate, ideally using only 1 or maybe 2 main buttons in total.
+-   **Beautiful**: Every frame should be beautiful, serving as a standalone piece of art from beginning to end without cluttered graphics, metrics, or numbers.
+-   **User control**: The user should be able to control as much as possible about the scene they are creating (i.e. reduce randomness)
 
-# NEXT UP
+An ideal feature addition is a feature that increases simplicity, beauty, or user control without detracting from the other two.
 
-Review following changes for clean code refactor:
-(TODO: need to clear if tile is placed on top of them)
-strawberry patch
-lily pads
+## Current Tasks
 
-cursor error state
+-   Remove gridlines from water (increase beauty)
+-   Add splash animation for water (increase beauty)
 
-update function in model
+## Future Ideas / Backlog
 
-place_tile_at_cursor additions
+### Environment and Animations
 
-Need to optimize user control, simplicity, and beauty.
+-   **Dynamic Environment**:
+    -   Consider adding seasons to change the environment dynamically.
+    -   Implement slow grass growth to simulate an evolving landscape.
+    -   Add animals
+    -   Add time of day
+-   **Animations**:
+    -   Implement splash animations for waterfalls that are 3+ blocks high.
+    -   Make water less grid-like
+    -   Add moving clouds, flying birds, and other ambient animations to enrich the environment.
+    -   Using pget and pset, perhaps add some type of shadows based on time of day or clouds passing overhead or even more advanced shadow calculations based on flora or animals.
 
-# Currently, all time-based things are based on frames (error checking, etc).
+### Game Modes
 
-I feel like this could be a problem because if something is computationally intensive, it might slow everything down...
+-   **Single Player**
+    -   Level system where users have a limited number of blocks to build a scene and as they progress they get access to more and more to build beautiful things
+    -   Timed challenges where users have x amount of time to build a scene from a given prompt (i.e. "Twin waterfall", "hidden marsh", "secret valley", etc)
+    -   Have a tutorial flow to introduce users to the game mechanics, showing examples, and showing small 3x3 plots to get basic point across slowly.
+    -   Art/Zen/Relaxation Mode: Focus on creative expression and relaxation.
+-   **Multiplayer**
+    -   One player manages flora and another manages different aspects, enhancing cooperative gameplay.
+    -   Race mode where players are side by side competing in a timed match
+    -   Create Together - There are two cursors in the same map and players can build together on once project
+    -   Art/Zen/Relaxation Mode: Focus on creative expression and relaxation.
 
-# Add view for current tile that is being placed from the cursor
+### Other Features
 
-# Add houses, tents, etc
+-   Undo action stack to allow players to revert changes.
+-   Rotate entire screen to shift tiles
+-   Transition from frame-based timing to potentially time-based checks to avoid slowdowns in computationally intensive scenarios.
+-   Add Houses/tents/castles? Not sure how to make this 'simple' for users.
 
-# Multi-player functionality?
+### User Interface
 
-This could be done by having one player responsible for things like flora, and the other for
+-   Add a view to show the current tile being placed from the cursor.
+-   Indicate errors through the cursor’s error state more effectively (sound/blinking?)
 
-Done
+### Sound and Music
 
-# I really need a way to save and load past creations
+-   Integrate sounds and music to enhance the immersive experience of the game.
 
-# Each frame, there is a tiny tiny chance that one of the grass tiles grows a strawberry patch.
+## Terminology In Codebase
 
-# if there is a 3+ block high waterfall, there should be a splash animation!
+-   **Movement Terms**:
+    -   `drow`, `dcol`, `dheight`: Denote differences in row, column, and height respectively. All are ints
+    -   `row`, `col`, `height`: Denote a row, column, and height. All are ints.
+    -   `dx`, `dy`: Used to denote differences in x and y coordinates. All are ints.
+    -   `MOVE`: Implies relative movement.
+    -   `SET`: Indicates placing at specific coordinates, regardless of current position.
+    -   `update()`: Each class' update method will, by convention of the codebase, be executed each frame.
 
-# starberry patches only form on lower levels of ground?
-
-# strawberry patches should form in clusters
-
-# Only allow 1 or 2 lilypads in an area at a time.
-
-# Add seasons??
-
-# Lily pads might grow on water in ponds
-
-# Clouds scrolling past
-
-# Birds
-
-# Stone under the dirt like minecraft at a certain depth
-
-# New goals:
-
-# Add grass growing slowly over time, randomly, to simulate an evolving environment.
-
-# Swap tileset.
-
-# Add frames to the model and try to add one thing of animation to the view.
-
-# Think about data structure that is holding the tiles. I could potentially refactor it to make expanding better. But also, it is nice to have it simple.
-
-# TODO: Understand how the render_list sorting works. Can I modify to understand it better?
-
-# Add undo action stack
-
-# TODO: Block about to be placed should probably be some greyscale version of the real one?
-
-# Add sounds/music
-
-# TODO: Add rotation of the entire table
-
-# Have a tutorial
-
-# Far future: City version
-
-# Perhaps should primarily be an art/zen/relaxation/creative outlet. Can add other game modes on top for fun.
-
-# Can have an arcade mode where two people are trying to be the most creative with the given prompt
-
-# Terminology
-
-drow is row difference
-dcol is col difference
-dheight is height difference
-dx is x difference
-xy is y difference
-
-MOVE implies relative
-SET implies placing at coords, regardless of current position
+---
