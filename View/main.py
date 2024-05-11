@@ -74,8 +74,6 @@ class View:
         pyxel.blt(x, y, 0, 16, 0, 16, 16, 0)
     
     def render_water_tile(self, x, y, frame: int, tile: Tile):
-
-
         frame_interval = pyxel.frame_count % 60
         if 0 <= frame_interval < 12:
             pyxel.blt(x, y, 0, 0, 16, 16, 16, 0)
@@ -89,6 +87,13 @@ class View:
         elif 48 <= frame_interval < 60:
             # Add your blt for this interval
             pyxel.blt(x, y, 0, 64, 16, 16, 16, 0)
+
+        # Waterfall conditional rendering
+        if tile.right_waterfall:
+            pyxel.blt(x, y, 0, 0, 32, 16, 16, 0)
+        
+        if tile.left_waterfall:
+            pyxel.blt(x, y, 0, 16, 32, 16, 16, 0)
         
     # Helper to translate row/col/height to x/y for rendering
     def calc_xy(self, origin_x, origin_y, row, col, height):

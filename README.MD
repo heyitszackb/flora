@@ -10,10 +10,9 @@ An ideal feature addition is a feature that increases simplicity, beauty, or use
 
 ## Current Tasks
 
-## Future Ideas / Backlog
+-   Add water shorelines on the edges of the water where it meets the land
 
--   Remove gridlines from water (increase beauty)
--   Add splash animation for water (increase beauty)
+## Future Ideas / Backlog
 
 ### Environment and Animations
 
@@ -51,6 +50,7 @@ An ideal feature addition is a feature that increases simplicity, beauty, or use
 ### User Interface
 
 -   Add a view to show the current tile being placed from the cursor.
+-   When tile type or something switches, the cursor could change shape or style or color.
 -   Indicate errors through the cursor’s error state more effectively (sound/blinking?)
 
 ### Sound and Music
@@ -78,3 +78,5 @@ Tasks are placed here after they are completed.
 
 -   Remove unecessary pyxel art
 -   Refactor view code to move art to 0th image
+-   Remove gridlines from water (increase beauty)
+-   Add basic waterfall visuals
