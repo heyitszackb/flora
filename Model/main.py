@@ -111,6 +111,15 @@ class Cursor:
         self.total_error_state_frames = 30
         self.in_error_state = False
 
+    # update methods are called every frame
+    def update(self):
+        if self.in_error_state:
+            self.current_num_frames_in_error_state += 1
+            if self.current_num_frames_in_error_state >= self.total_error_state_frames:
+                self.current_num_frames_in_error_state = 0
+                self.set_error_state(False)
+        
+
     def set_error_state(self, error_state):
         self.in_error_state = error_state
 
@@ -156,13 +165,7 @@ class Model:
     
     # runs each frame, is responsible for handling frame-by-frame model updates
     def update(self):
-        # Update the error state of the cursor at each frame
-        if self.cursor.in_error_state:
-            self.cursor.current_num_frames_in_error_state += 1
-            print(self.cursor.current_num_frames_in_error_state)
-            if self.cursor.current_num_frames_in_error_state >= self.cursor.total_error_state_frames:
-                self.cursor.current_num_frames_in_error_state = 0
-                self.cursor.set_error_state(False)
+        self.cursor.update()
 
     # move the cursor by drow and dcol with the tile that was at the cursor's position
     def move_cursor(self, drow: int, dcol: int):
@@ -171,48 +174,54 @@ class Model:
 
     # Places a tile a the cursor's position with the cursor's tile type
     def place_tile_at_cursor(self):
+        if self._is_tile_placement_valid():
+            # change grass to dirt if placing grass on grass
+            self._change_grass_to_dirt()
+            new_tile = Tile(self.cursor.position.get_new_position(), self.cursor.get_current_tile_type())
+            self.garden.add_tile_to_stack(new_tile)
+            self.cursor.move(0, 0, 1)
+        else:
+            self.cursor.set_error_state(True)
+
+    def _is_tile_placement_valid(self) -> bool:
         # We can't build outside of the garden
         if self.cursor.position.height >= self.garden.get_height_limit():
-            self.cursor.set_error_state(True)
-            return
-        
+            return False
         # We can't place a grass tile on top of a water tile if we aren't placing water too
         if self.cursor.get_current_tile_type() != TileType.WATER and self.cursor.position.height != 0:
-            if self.garden.get_tile(self.cursor.position.get_new_moved_position(dheight=-1)).get_type() == TileType.WATER:
-                self.cursor.set_error_state(True)
-                return
-            
-        
-        # If the tile is grass and the tile under it is grass, change it to dirt
+            below_tile_type = self.garden.get_tile(self.cursor.position.get_new_moved_position(dheight=-1)).get_type()
+            if below_tile_type == TileType.WATER:
+                return False
+        return True
+
+    def _change_grass_to_dirt(self):
+        # if we are placing on grass and we are not on the bottom layer, change the tile under it to dirt
         if self.cursor.get_current_tile_type() == TileType.GRASS and self.cursor.position.height != 0:
-            if self.garden.get_tile(self.cursor.position.get_new_moved_position(dheight=-1)).get_type() == TileType.GRASS:
-                # change it to dirt
-                self.garden.get_tile(self.cursor.position.get_new_moved_position(dheight=-1)).set_tile_type(TileType.DIRT)
-            
-        # I do not like this line, but I need to create a new position in order to eliminate some awful bugs with shared positions
-        self.garden.add_tile_to_stack(Tile(self.cursor.position.get_new_position(), self.cursor.get_current_tile_type()))
-        # Move up the cursor
-        self.cursor.move(0,0,1)
+            below_tile = self.garden.get_tile(self.cursor.position.get_new_moved_position(dheight=-1))
+            if below_tile.get_type() == TileType.GRASS:
+                below_tile.set_tile_type(TileType.DIRT)
         
-    # Deletes the tile at the cursor's position
+
     def delete_tile_at_cursor(self):
-        # If we are on the bottom layer, we don't delete the tile
-        if self.cursor.position.height <= self.garden.depth_limit:
+        if self._is_deletion_valid():
+            # Delete the tile at the cursor position
+            self.garden.remove_tile_from_stack(self.cursor.position.get_new_position())
+            # Move cursor down
+            self.cursor.move(0, 0, -1)
+            # if there is dirt exposed now, change it to grass
+            self._change_dirt_to_grass()
+        else:
             self.cursor.set_error_state(True)
-            return
-        
-         # Remove the tile at the location of the cursor
-        self.garden.remove_tile_from_stack(self.cursor.position.get_new_position())
 
-        # move the cursor down in height
-        self.cursor.move(0,0,-1)
-        
-        # When I delete a grass tile, if the tile under the cursor is dirt, it should be changed to grass.
+    # conditions that need to be met for tile deletion to be valid
+    def _is_deletion_valid(self):
+        return self.cursor.position.height > self.garden.depth_limit
+
+    def _change_dirt_to_grass(self):
         if self.cursor.position.height != 0:
-            if self.garden.get_tile(self.cursor.position.get_new_moved_position(dheight=-1)).get_type() == TileType.DIRT:
-                # change it to grass
-                self.garden.get_tile(self.cursor.position.get_new_moved_position(dheight=-1)).set_tile_type(TileType.GRASS)
-
+            below_tile = self.garden.get_tile(self.cursor.position.get_new_moved_position(dheight=-1))
+            if below_tile.get_type() == TileType.DIRT:
+                below_tile.set_tile_type(TileType.GRASS)
 
     def cycle_cursor_tile_type(self):
         # Change what the cursor places in the future
