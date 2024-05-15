@@ -35,8 +35,8 @@ class Tile:
     def __init__(self, position=None, tile_type=TileType.GRASS):
         self.tile_type = tile_type
         self.position = position if position else Position()
-        self.left_waterfall = 0 # the higher the number, the larger the waterfall on that side.
-        self.right_waterfall = 0 # the higher the number, the larger the waterfall on that side.
+        self.left_waterfall_height = 0 # the higher the number, the larger the waterfall on that side.
+        self.right_waterfall_height = 0 # the higher the number, the larger the waterfall on that side.
 
     def set_tile_type(self, tile_type: TileType):
         self.tile_type = tile_type
@@ -57,9 +57,9 @@ class Garden:
 
     # executed each frame
     def update(self):
-        self._update_waterfalls()
+        pass
     
-    def _update_waterfalls(self):
+    def update_waterfalls(self):
         for row in range(self.size):
             for col in range(self.size):
                 stack = self.get_stack(row, col)
@@ -67,8 +67,8 @@ class Garden:
                     tile: Tile = stack[height]
 
                     # reset so that when we delete water, it will update
-                    tile.right_waterfall = 0  # recalculate each time, inefficient but okay for now.
-                    tile.left_waterfall = 0
+                    tile.right_waterfall_height = 0  # recalculate each time, inefficient but okay for now.
+                    tile.left_waterfall_height = 0
 
                     if tile.get_type() == TileType.WATER:
                         # Update left waterfall
@@ -78,7 +78,7 @@ class Garden:
                             # Ensure we're within bounds and not wrapping around
                             if col - 1 >= 0 and len(self.get_stack(row, col - 1)) > height + num:
                                 if height < self.height_limit - 1 and self.get_tile(Position(row, col - 1, height + num)).get_type() == TileType.WATER:
-                                    tile.left_waterfall = num
+                                    tile.left_waterfall_height = num
                                     num += 1
                                 else:
                                     loop = False
@@ -92,7 +92,7 @@ class Garden:
                             # Ensure we're within bounds and not wrapping around
                             if row - 1 >= 0 and len(self.get_stack(row - 1, col)) > height + num:
                                 if height < self.height_limit - 1 and self.get_tile(Position(row - 1, col, height + num)).get_type() == TileType.WATER:
-                                    tile.right_waterfall = num
+                                    tile.right_waterfall_height = num
                                     num += 1
                                 else:
                                     loop = False
@@ -235,6 +235,8 @@ class Model:
             new_tile = Tile(self.cursor.position.get_new_position(), self.cursor.get_current_tile_type())
             self.garden.add_tile_to_stack(new_tile)
             self.cursor.move(0, 0, 1)
+            # Update the waterfall data
+            self.garden.update_waterfalls()
         else:
             self.cursor.set_error_state(True)
 
@@ -265,6 +267,8 @@ class Model:
             self.cursor.move(0, 0, -1)
             # if there is dirt exposed now, change it to grass
             self._change_dirt_to_grass()
+            # update data
+            self.garden.update_waterfalls()
         else:
             self.cursor.set_error_state(True)
 

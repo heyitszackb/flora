@@ -89,7 +89,7 @@ class View:
             pyxel.blt(x, y, 0, 64, 16, 16, 16, 0)
 
         # waterfall
-        if tile.right_waterfall == 1:
+        if tile.right_waterfall_height == 1:
             # every 12 frames, the waterfall animation can change (not currently changing)
             if 0 <= frame_interval < 12:
                 pyxel.blt(x, y, 0, 0, 32, 16, 16, 0)
@@ -102,7 +102,7 @@ class View:
             elif 48 <= frame_interval < 60:
                 pyxel.blt(x, y, 0, 0, 32, 16, 16, 0)
         
-        if tile.left_waterfall == 1:
+        if tile.left_waterfall_height == 1:
             # every 12 frames, the waterfall animation can change (not currently changing)
             if 0 <= frame_interval < 12:
                 pyxel.blt(x, y, 0, 0, 48, 16, 16, 0)
@@ -115,7 +115,7 @@ class View:
             elif 48 <= frame_interval < 60:
                 pyxel.blt(x, y, 0, 0, 48, 16, 16, 0)
         
-        if tile.right_waterfall > 1:
+        if tile.right_waterfall_height > 1:
             if 0 <= frame_interval < 12:
                 pyxel.blt(x, y, 0, 32, 32, 16, 16, 0)
             if 12 <= frame_interval < 24:
@@ -127,7 +127,7 @@ class View:
             elif 48 <= frame_interval < 60:
                 pyxel.blt(x, y, 0, 32, 32, 16, 16, 0)
 
-        if tile.left_waterfall > 1:
+        if tile.left_waterfall_height > 1:
             # every 12 frames, the waterfall animation can change (not currently changing)
             if 0 <= frame_interval < 12:
                 pyxel.blt(x, y, 0, 32, 48, 16, 16, 0)
