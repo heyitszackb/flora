@@ -13,7 +13,11 @@ class Controller:
     def run(self):
         pyxel.run(self.update, self.draw)
 
-    def update(self): # executed each frame
+    def update(self):
+            self.handle_input()
+            self.model.update()
+
+    def handle_input(self):
         if pyxel.btnp(pyxel.KEY_RIGHT):
             self.model.move_cursor(0,1)
         if pyxel.btnp(pyxel.KEY_LEFT):
@@ -31,18 +35,15 @@ class Controller:
         if pyxel.btnp(pyxel.KEY_R):
             self.model.reset_garden()
 
-        # export functionality
         if pyxel.btnp(pyxel.KEY_E):
             self.export_tool.export(self.model.garden)
+            print("Garden state saved.")
 
-        # load functionality
         if pyxel.btnp(pyxel.KEY_L):
             garden_state = self.export_tool.load()
-            self.load_garden(garden_state)
-
-        # increase the frame
-        self.model.frame += 1
-        self.model.update()
+            if garden_state:
+                self.load_garden(garden_state)
+                print("Saved garden state loaded.")
 
     def draw(self): # executed each frame
         self.view.render(self.model) # executed each frame
@@ -58,5 +59,4 @@ class Controller:
                     self.model.cursor.position.set_position(row, col, height)
                     self.model.cursor.set_current_tile_type(tile_type)
                     self.model.place_tile_at_cursor()
-        # self.model.cursor.position.set_position(0, 0, 1)
         self.model.cursor.set_current_tile_type(TileType.GRASS)

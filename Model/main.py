@@ -214,6 +214,7 @@ class Model:
     
     # runs each frame, is responsible for handling frame-by-frame model updates
     def update(self):
+        self.frame += 1
         self.cursor.update()
         self.garden.update()
 

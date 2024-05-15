@@ -10,25 +10,14 @@ class ExportTool:
     def export(self, garden: Garden, filename: str = "garden_export.json"):
         garden_state = self.serialize_garden(garden)
         filepath = self.save_directory / filename
-        print("Serialized garden state:", garden_state)
-        try:
-            print("Attempting to write to file:", filepath)
-            with open(filepath, 'w') as file:
-                json.dump(garden_state, file)
-                print("Garden state successfully exported to", filepath)
-        except Exception as e:
-            print("An error occurred while writing to the file:", e)
+        with open(filepath, 'w') as file:
+            json.dump(garden_state, file)
 
     def load(self, filename: str = "garden_export.json"):
         filepath = self.save_directory / filename
-        try:
-            with open(filepath, 'r') as file:
-                garden_state = json.load(file)
-                print("Garden state successfully loaded from", filepath)
-                return garden_state
-        except Exception as e:
-            print("An error occurred while reading the file:", e)
-            return None
+        with open(filepath, 'r') as file:
+            garden_state = json.load(file)
+            return garden_state
 
     def serialize_garden(self, garden: Garden):
         return {
