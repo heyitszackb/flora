@@ -152,8 +152,8 @@ class View:
         # if tile.is_top_waterfall and tile.waterfall_height == 3:
             # pyxel.blt(x, y, 0, 0, 152, 16, 32, 0)
 
-        if tile.is_top_waterfall and tile.waterfall_height == 4:
-            pyxel.blt(x, y, 0, 0, 184, 16, 32, 0)
+        # if tile.is_top_waterfall and tile.waterfall_height == 4:
+            # pyxel.blt(x, y, 0, 0, 184, 16, 32, 0)
 
         # # top of the waterfall
         # if tile.is_top_waterfall:
