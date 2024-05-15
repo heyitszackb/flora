@@ -141,8 +141,12 @@ class Garden:
                     current_stack_height += 1
     
     def reset_garden(self):
-        # delete all tiles and reset the garden to its original state
+        # delete all tiles and reset the garden to its original state (grass on bottom)
         self.tiles = [[[Tile(Position(row, col, 0))] for col in range(self.size)] for row in range(self.size)]
+
+    def clear_garden(self):
+        # clear all tiles, even grass on the bottom
+        self.tiles = [[[] for _ in range(self.size)] for _ in range(self.size)]
 
     
 class Cursor:
@@ -280,6 +284,16 @@ class Model:
 
         # reset the cursor position
         self.cursor.position.set_position(0,0,1)
+        # reset the cursor tile type
+        self.cursor.set_current_tile_type(TileType.GRASS)
+
+    # TODO: maybe make this function a modified reset_garden with a clear=True flag...?
+    def clear_garden(self):
+        # Clear the garden
+        self.garden.clear_garden()
+
+        # reset the cursor position
+        self.cursor.position.set_position(0,0,0)
         # reset the cursor tile type
         self.cursor.set_current_tile_type(TileType.GRASS)
 
