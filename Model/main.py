@@ -64,18 +64,19 @@ class Garden:
             for col in range(self.size):
                 stack = self.get_stack(row, col)
                 for height in range(len(stack)):
-
-                    tile = stack[height]
+                    tile: Tile = stack[height]
 
                     # reset so that when we delete water, it will update
-                    tile.right_waterfall = 0 # recalculate each time, inefficient but okay for now.
+                    tile.right_waterfall = 0  # recalculate each time, inefficient but okay for now.
                     tile.left_waterfall = 0
 
                     if tile.get_type() == TileType.WATER:
+                        # Update left waterfall
                         num = 1
                         loop = True
                         while loop:
-                            if len(self.get_stack(row, col - 1)) > height + num:
+                            # Ensure we're within bounds and not wrapping around
+                            if col - 1 >= 0 and len(self.get_stack(row, col - 1)) > height + num:
                                 if height < self.height_limit - 1 and self.get_tile(Position(row, col - 1, height + num)).get_type() == TileType.WATER:
                                     tile.left_waterfall = num
                                     num += 1
@@ -83,11 +84,13 @@ class Garden:
                                     loop = False
                             else:
                                 loop = False
-                        
+
+                        # Update right waterfall
                         num = 1
                         loop = True
                         while loop:
-                            if len(self.get_stack(row - 1, col)) > height + num:
+                            # Ensure we're within bounds and not wrapping around
+                            if row - 1 >= 0 and len(self.get_stack(row - 1, col)) > height + num:
                                 if height < self.height_limit - 1 and self.get_tile(Position(row - 1, col, height + num)).get_type() == TileType.WATER:
                                     tile.right_waterfall = num
                                     num += 1
