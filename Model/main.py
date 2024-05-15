@@ -38,6 +38,7 @@ class Tile:
         self.left_waterfall_height = 0 # the higher the number, the larger the waterfall on that side.
         self.right_waterfall_height = 0 # the higher the number, the larger the waterfall on that side.
         self.waterfall_height = 0 # The number of water tiles in this stack, including this one.
+        self.is_top_waterfall = False
 
     def set_tile_type(self, tile_type: TileType):
         self.tile_type = tile_type
@@ -59,25 +60,31 @@ class Garden:
     # executed each frame
     def update(self):
         pass
-    
+
+    # TODO: Refactor
     def update_waterfalls(self):
         for row in range(self.size):
             for col in range(self.size):
                 stack = self.get_stack(row, col)
+                last_water_tile = None
 
                 for height in range(len(stack)):
-                    
                     tile: Tile = stack[height]
 
-                    tile.right_waterfall_height = 0  
+                    tile.right_waterfall_height = 0
                     tile.left_waterfall_height = 0
+                    tile.is_top_waterfall = False
 
                     if tile.get_type() == TileType.WATER:
                         tile.waterfall_height = self.calculate_waterfall_height(row, col, height)
                         tile.left_waterfall_height = self.calculate_left_waterfall_height(row, col, height)
                         tile.right_waterfall_height = self.calculate_right_waterfall_height(row, col, height)
+                        last_water_tile = tile  # Keep track of the last water tile
 
-        
+                # Set the last water tile to be the top of the waterfall
+                if last_water_tile:
+                    last_water_tile.is_top_waterfall = True
+
 
     def calculate_right_waterfall_height(self, row, col, height):
         # Update right waterfall
@@ -114,11 +121,11 @@ class Garden:
                 loop = False
         return final_height
 
-
+    # 1 is the top of the waterfall
     def calculate_waterfall_height(self, row, col, start_height):
         stack = self.get_stack(row, col)
         height = 0
-        for tile in stack[start_height:]:
+        for tile in reversed(stack[:start_height + 1]):
             if tile.get_type() == TileType.WATER:
                 height += 1
             else:

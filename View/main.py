@@ -140,8 +140,25 @@ class View:
             elif 48 <= frame_interval < 60:
                 pyxel.blt(x, y, 0, 32, 48, 16, 16, 0)
 
-        # 1 is always the top of the waterfall
-        pyxel.blt(x, y, 0, 16*tile.waterfall_height-16, 112, 16, 16, 0)
+        # # 1 is always the top of the waterfall
+        # pyxel.blt(x, y, 0, 16*tile.waterfall_height-16, 112, 16, 16, 0)
+
+        # if tile.is_top_waterfall and tile.waterfall_height == 1:
+            # pyxel.blt(x, y, 0, 0, 112, 16, 16, 0)
+
+        # if tile.is_top_waterfall and tile.waterfall_height == 2:
+            # pyxel.blt(x, y, 0, 0, 128, 16, 20, 0)
+        
+        # if tile.is_top_waterfall and tile.waterfall_height == 3:
+            # pyxel.blt(x, y, 0, 0, 152, 16, 32, 0)
+
+        if tile.is_top_waterfall and tile.waterfall_height == 4:
+            pyxel.blt(x, y, 0, 0, 184, 16, 32, 0)
+
+        # # top of the waterfall
+        # if tile.is_top_waterfall:
+        #     pyxel.blt(x, y, 0, 0, 112+16, 16, 16, 0)
+
 
         
     # Helper to translate row/col/height to x/y for rendering
