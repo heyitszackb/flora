@@ -33,7 +33,6 @@ class Controller:
 
         # export functionality
         if pyxel.btnp(pyxel.KEY_E):
-            print("exported")
             self.export_tool.export(self.model.garden)
 
         # load functionality

@@ -7,11 +7,12 @@ class Position:
         self.col = col
         self.height = height
 
-    # returns a NEW position object that can be used elsewhere.
     def get_new_position(self):
+        """Returns a new Position object with the same coordinates."""
         return Position(self.row, self.col, self.height)
     
     def get_new_moved_position(self, drow=0, dcol=0, dheight=0):
+        """Returns a new Position object moved by the specified deltas."""
         return Position(self.row + drow, self.col + dcol, self.height + dheight)
 
     def move(self, drow, dcol, dheight):
@@ -24,8 +25,8 @@ class Position:
         self.col = col
         self.height = height
 
-    #Establishes boundaries for the position
     def clamp(self, max_row, max_col, max_height):
+        """Clamps the position within the specified boundaries."""
         self.row = max(0, min(max_row, self.row))
         self.col = max(0, min(max_col, self.col))
         self.height = max(0, min(max_height, self.height))
