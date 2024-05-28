@@ -29,7 +29,7 @@ class View:
     def render(self, model: Model):
         pyxel.cls(6) # bg color
         frame = model.frame
-        pyxel.text(0, 0, f"Frame: {model.frame}", 0)
+        # pyxel.text(0, 0, f"Frame: {model.frame}", 0)
         render_list = self.collect_renderables(model)
         
         render_list.sort(key=lambda item: (item.position.row, item.position.col, item.position.height, ))

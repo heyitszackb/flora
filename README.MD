@@ -12,6 +12,7 @@ An ideal feature addition is a feature that increases simplicity, beauty, or use
 
 -   Add export tool (this will help with creating animations, also cool to save projects).
 -   Water one block high should not be displayed as "falling"
+-   Water should be a bit lower than the ground on the top, maybe 2px.
 -   Make a way to save and load maps. It is easy when you only have water/grass because the program can derive the more complex animations from the base heightmap
 -   Optimize the water calculations to re-calculate only when someone places/delets a block instead of every single frame.
 -   Further beautify water animations by adding height data for water blocks. The lower a water block is, the less streaks/lines there should be.
