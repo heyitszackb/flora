@@ -1,6 +1,6 @@
 from pathlib import Path
 import json
-from Model.main import Garden, TileType
+from Model.main import Garden
 
 class ExportTool:
     def __init__(self, save_directory: str = "../save_files"):

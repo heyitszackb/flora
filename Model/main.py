@@ -40,6 +40,10 @@ class Tile:
         self.waterfall_height = 0 # The number of water tiles in this stack, including this one.
         self.is_top_waterfall = False
 
+        self.top_left_border = False
+        self.top_right_border = False
+        self.top_middle_border = False
+
     def set_tile_type(self, tile_type: TileType):
         self.tile_type = tile_type
     
@@ -56,12 +60,43 @@ class Garden:
         self.size = size
         self.height_limit = 10
         self.depth_limit = 0
+        self.update_data()
 
     # executed each frame
     def update(self):
         pass
 
-    # TODO: Refactor
+    def update_data(self):
+        self.update_borders()
+        self.update_waterfalls()
+
+    def update_borders(self):
+        for row in range(self.size):
+            for col in range(self.size):
+                stack = self.get_stack(row, col)
+                top_tile: Tile = stack[-1] if stack else None
+                if top_tile:
+                    top_tile.top_left_border = True
+                    top_tile.top_right_border = True
+                    top_tile.top_middle_border = True
+
+                    # Check top right neighbor
+                    if row - 1 >= 0:
+                        if len(stack) == len(self.get_stack(row - 1, col)):
+                            top_tile.top_right_border = False
+                    
+                    # Check top left neighbor
+                    if col - 1 >= 0:
+                        if len(stack) == len(self.get_stack(row, col - 1)):
+                            top_tile.top_left_border = False
+                    
+                    # Check top middle neighbor
+                    if row - 1 >= 0 and col - 1 >= 0:
+                        if len(stack) == len(self.get_stack(row - 1, col - 1)):
+                            top_tile.top_middle_border = False
+
+
+
     def update_waterfalls(self):
         for row in range(self.size):
             for col in range(self.size):
@@ -180,6 +215,7 @@ class Garden:
     def reset_garden(self):
         # delete all tiles and reset the garden to its original state (grass on bottom)
         self.tiles = [[[Tile(Position(row, col, 0))] for col in range(self.size)] for row in range(self.size)]
+        self.update_data()
 
     def clear_garden(self):
         # clear all tiles, even grass on the bottom
@@ -269,7 +305,7 @@ class Model:
             self.garden.add_tile_to_stack(new_tile)
             self.cursor.move(0, 0, 1)
             # Update the waterfall data
-            self.garden.update_waterfalls()
+            self.garden.update_data()
         else:
             self.cursor.set_error_state(True)
 
@@ -301,7 +337,7 @@ class Model:
             # if there is dirt exposed now, change it to grass
             self._change_dirt_to_grass()
             # update data
-            self.garden.update_waterfalls()
+            self.garden.update_data()
         else:
             self.cursor.set_error_state(True)
 

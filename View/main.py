@@ -27,7 +27,7 @@ class View:
         pass
 
     def render(self, model: Model):
-        pyxel.cls(6) # bg color
+        pyxel.cls(5) # bg color
         frame = model.frame
         # pyxel.text(0, 0, f"Frame: {model.frame}", 0)
         render_list = self.collect_renderables(model)
@@ -69,6 +69,14 @@ class View:
 
     def render_grass_tile(self,x,y, frame: int, tile: Tile):
         pyxel.blt(x, y, 0, 0, 0, 16, 16, 0)
+
+        # borders
+        if tile.top_left_border:
+            pyxel.blt(x, y, 0, 0, 112, 16, 16, 0)
+        if tile.top_right_border:
+            pyxel.blt(x, y, 0, 16, 112, 16, 16, 0)
+        if tile.top_middle_border:
+            pyxel.blt(x, y, 0, 32, 112, 16, 16, 0)
 
     def render_dirt_tile(self,x,y, frame: int, tile: Tile):
         pyxel.blt(x, y, 0, 16, 0, 16, 16, 0)
@@ -139,21 +147,6 @@ class View:
                 pyxel.blt(x, y, 0, 48, 48, 16, 16, 0)
             elif 48 <= frame_interval < 60:
                 pyxel.blt(x, y, 0, 32, 48, 16, 16, 0)
-
-        # # 1 is always the top of the waterfall
-        # pyxel.blt(x, y, 0, 16*tile.waterfall_height-16, 112, 16, 16, 0)
-
-        # if tile.is_top_waterfall and tile.waterfall_height == 1:
-            # pyxel.blt(x, y, 0, 0, 112, 16, 16, 0)
-
-        # if tile.is_top_waterfall and tile.waterfall_height == 2:
-            # pyxel.blt(x, y, 0, 0, 128, 16, 20, 0)
-        
-        # if tile.is_top_waterfall and tile.waterfall_height == 3:
-            # pyxel.blt(x, y, 0, 0, 152, 16, 32, 0)
-
-        # if tile.is_top_waterfall and tile.waterfall_height == 4:
-            # pyxel.blt(x, y, 0, 0, 184, 16, 32, 0)
 
         # # top of the waterfall
         # if tile.is_top_waterfall:
