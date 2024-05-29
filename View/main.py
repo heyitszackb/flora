@@ -12,7 +12,7 @@ class View:
         self.origin_x = 90
         self.origin_y = 80
 
-        self.tile_height = 5 # offset to avoid confusing "M.C. Escher" overlap
+        self.tile_height = 5 # 5 instead of 4 offset to avoid confusing "M.C. Escher" overlap
         self.tile_row_length = 8
         self.tile_col_length = 4
 
@@ -27,9 +27,8 @@ class View:
         pass
 
     def render(self, model: Model):
-        pyxel.cls(5) # bg color
+        pyxel.cls(5)
         frame = model.frame
-        # pyxel.text(0, 0, f"Frame: {model.frame}", 0)
         render_list = self.collect_renderables(model)
         
         render_list.sort(key=lambda item: (item.position.row, item.position.col, item.position.height, ))
@@ -45,6 +44,7 @@ class View:
 
         render_func = self.tile_renderers.get(tile.get_type(), lambda x, y, frame, tile: None)
         render_func(x, y, frame, tile)
+
     def render_cursor(self, cursor: Cursor):
         x, y = self.calc_xy(self.origin_x, self.origin_y,cursor.position.row, cursor.position.col,cursor.position.height)
         if cursor.in_error_state:
@@ -70,89 +70,19 @@ class View:
     def render_grass_tile(self,x,y, frame: int, tile: Tile):
         pyxel.blt(x, y, 0, 0, 0, 16, 16, 0)
 
-        # borders
-        if tile.top_left_border:
-            pyxel.blt(x, y, 0, 0, 112, 16, 16, 0)
-        if tile.top_right_border:
-            pyxel.blt(x, y, 0, 16, 112, 16, 16, 0)
-        if tile.top_middle_border:
-            pyxel.blt(x, y, 0, 32, 112, 16, 16, 0)
-
     def render_dirt_tile(self,x,y, frame: int, tile: Tile):
         pyxel.blt(x, y, 0, 16, 0, 16, 16, 0)
     
     def render_water_tile(self, x, y, frame: int, tile: Tile):
-        frame_interval = pyxel.frame_count % 60
-        if 0 <= frame_interval < 12:
-            pyxel.blt(x, y, 0, 0, 16, 16, 16, 0)
-        if 12 <= frame_interval < 24:
-            pyxel.blt(x, y, 0, 16, 16, 16, 16, 0)
-        elif 24 <= frame_interval < 36:
-            pyxel.blt(x, y, 0, 32, 16, 16, 16, 0)
-        elif 36 <= frame_interval < 48:
-            # Add your blt for this interval
-            pyxel.blt(x, y, 0, 48, 16, 16, 16, 0)  # Assuming 48, 16 is the next sprite
-        elif 48 <= frame_interval < 60:
-            # Add your blt for this interval
-            pyxel.blt(x, y, 0, 64, 16, 16, 16, 0)
+        # Water tile
+        pyxel.blt(x, y, 0, 0, 80, 16, 16, 0)
 
         # waterfall
-        if tile.right_waterfall_height == 1:
-            # every 12 frames, the waterfall animation can change (not currently changing)
-            if 0 <= frame_interval < 12:
-                pyxel.blt(x, y, 0, 0, 32, 16, 16, 0)
-            if 12 <= frame_interval < 24:
-                pyxel.blt(x, y, 0, 0, 32, 16, 16, 0)
-            elif 24 <= frame_interval < 36:
-                pyxel.blt(x, y, 0, 0, 32, 16, 16, 0)
-            elif 36 <= frame_interval < 48:
-                pyxel.blt(x, y, 0, 0, 32, 16, 16, 0)
-            elif 48 <= frame_interval < 60:
-                pyxel.blt(x, y, 0, 0, 32, 16, 16, 0)
-        
-        if tile.left_waterfall_height == 1:
-            # every 12 frames, the waterfall animation can change (not currently changing)
-            if 0 <= frame_interval < 12:
-                pyxel.blt(x, y, 0, 0, 48, 16, 16, 0)
-            if 12 <= frame_interval < 24:
-                pyxel.blt(x, y, 0, 0, 48, 16, 16, 0)
-            elif 24 <= frame_interval < 36:
-                pyxel.blt(x, y, 0, 0, 48, 16, 16, 0)
-            elif 36 <= frame_interval < 48:
-                pyxel.blt(x, y, 0, 0, 48, 16, 16, 0)
-            elif 48 <= frame_interval < 60:
-                pyxel.blt(x, y, 0, 0, 48, 16, 16, 0)
-        
         if tile.right_waterfall_height > 1:
-            if 0 <= frame_interval < 12:
-                pyxel.blt(x, y, 0, 32, 32, 16, 16, 0)
-            if 12 <= frame_interval < 24:
-                pyxel.blt(x, y, 0, 48, 32, 16, 16, 0)
-            elif 24 <= frame_interval < 36:
-                pyxel.blt(x, y, 0, 32, 32, 16, 16, 0)
-            elif 36 <= frame_interval < 48:
-                pyxel.blt(x, y, 0, 48, 32, 16, 16, 0)
-            elif 48 <= frame_interval < 60:
-                pyxel.blt(x, y, 0, 32, 32, 16, 16, 0)
-
+            pyxel.blt(x, y, 0, 0, 32, 16, 16, 0)
+        
         if tile.left_waterfall_height > 1:
-            # every 12 frames, the waterfall animation can change (not currently changing)
-            if 0 <= frame_interval < 12:
-                pyxel.blt(x, y, 0, 32, 48, 16, 16, 0)
-            if 12 <= frame_interval < 24:
-                pyxel.blt(x, y, 0, 48, 48, 16, 16, 0)
-            elif 24 <= frame_interval < 36:
-                pyxel.blt(x, y, 0, 32, 48, 16, 16, 0)
-            elif 36 <= frame_interval < 48:
-                pyxel.blt(x, y, 0, 48, 48, 16, 16, 0)
-            elif 48 <= frame_interval < 60:
-                pyxel.blt(x, y, 0, 32, 48, 16, 16, 0)
-
-        # # top of the waterfall
-        # if tile.is_top_waterfall:
-        #     pyxel.blt(x, y, 0, 0, 112+16, 16, 16, 0)
-
-
+            pyxel.blt(x, y, 0, 0, 48, 16, 16, 0)
         
     # Helper to translate row/col/height to x/y for rendering
     def calc_xy(self, origin_x, origin_y, row, col, height):

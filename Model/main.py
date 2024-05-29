@@ -1,4 +1,3 @@
-import random
 from const import TileType
 
 class Position:
@@ -40,10 +39,6 @@ class Tile:
         self.waterfall_height = 0 # The number of water tiles in this stack, including this one.
         self.is_top_waterfall = False
 
-        self.top_left_border = False
-        self.top_right_border = False
-        self.top_middle_border = False
-
     def set_tile_type(self, tile_type: TileType):
         self.tile_type = tile_type
     
@@ -67,37 +62,6 @@ class Garden:
         pass
 
     def update_data(self):
-        self.update_borders()
-        self.update_waterfalls()
-
-    def update_borders(self):
-        for row in range(self.size):
-            for col in range(self.size):
-                stack = self.get_stack(row, col)
-                top_tile: Tile = stack[-1] if stack else None
-                if top_tile:
-                    top_tile.top_left_border = True
-                    top_tile.top_right_border = True
-                    top_tile.top_middle_border = True
-
-                    # Check top right neighbor
-                    if row - 1 >= 0:
-                        if len(stack) == len(self.get_stack(row - 1, col)):
-                            top_tile.top_right_border = False
-                    
-                    # Check top left neighbor
-                    if col - 1 >= 0:
-                        if len(stack) == len(self.get_stack(row, col - 1)):
-                            top_tile.top_left_border = False
-                    
-                    # Check top middle neighbor
-                    if row - 1 >= 0 and col - 1 >= 0:
-                        if len(stack) == len(self.get_stack(row - 1, col - 1)):
-                            top_tile.top_middle_border = False
-
-
-
-    def update_waterfalls(self):
         for row in range(self.size):
             for col in range(self.size):
                 stack = self.get_stack(row, col)
@@ -198,19 +162,6 @@ class Garden:
 
     def __str__(self):
         return '\n'.join([' '.join([str(tile) for tile in row]) for row in self.tiles])
-
-    def randomize_garden(self):
-        size = len(self.get_tiles())  # Assuming square garden for simplicity
-        for row in range(size):
-            for col in range(size):
-                current_stack_height = len(self.get_stack(row, col))
-                # Random number of new grass blocks to add (between 1 and 3)
-                num_new_blocks = random.randint(1, 3)
-                for _ in range(num_new_blocks):
-                    new_type = TileType.DIRT if random.random() < 0.1 else TileType.GRASS  # 10% chance for type 'd'
-                    new_tile = Tile(Position(row, col, current_stack_height), new_type)
-                    self.add_tile_to_stack(new_tile)
-                    current_stack_height += 1
     
     def reset_garden(self):
         # delete all tiles and reset the garden to its original state (grass on bottom)
