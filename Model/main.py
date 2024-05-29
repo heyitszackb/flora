@@ -202,8 +202,9 @@ class Cursor:
         self.current_type = tile_type
 
     def cycle_tile_type(self):
-        # cycle between g, d, and w
         if self.current_type == TileType.GRASS:
+            self.current_type = TileType.TALL_GRASS
+        elif self.current_type == TileType.TALL_GRASS:
             self.current_type = TileType.WATER
         
         elif self.current_type == TileType.WATER:
@@ -250,7 +251,7 @@ class Model:
     # Places a tile a the cursor's position with the cursor's tile type
     def place_tile_at_cursor(self):
         if self._is_tile_placement_valid():
-            # change grass to dirt if placing grass on grass
+            # change grass to dirt if placing (water or gras) on grass
             self._change_grass_to_dirt()
             new_tile = Tile(self.cursor.position.get_new_position(), self.cursor.get_current_tile_type())
             self.garden.add_tile_to_stack(new_tile)
@@ -273,7 +274,7 @@ class Model:
 
     def _change_grass_to_dirt(self):
         # if we are placing on grass and we are not on the bottom layer, change the tile under it to dirt
-        if self.cursor.get_current_tile_type() == TileType.GRASS and self.cursor.position.height != 0:
+        if ((self.cursor.get_current_tile_type() == TileType.GRASS) or (self.cursor.get_current_tile_type() == TileType.WATER)) and self.cursor.position.height != 0:
             below_tile = self.garden.get_tile(self.cursor.position.get_new_moved_position(dheight=-1))
             if below_tile.get_type() == TileType.GRASS:
                 below_tile.set_tile_type(TileType.DIRT)

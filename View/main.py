@@ -20,6 +20,7 @@ class View:
             TileType.GRASS: self.render_grass_tile,
             TileType.DIRT: self.render_dirt_tile,
             TileType.WATER: self.render_water_tile,
+            TileType.TALL_GRASS: self.render_tall_grass_tile
         }
 
     # For future animation
@@ -27,7 +28,9 @@ class View:
         pass
 
     def render(self, model: Model):
-        pyxel.cls(5)
+        pyxel.cls(11)
+        print(pyxel.mouse_x, pyxel.mouse_y)
+        pyxel.mouse(True)
         frame = model.frame
         render_list = self.collect_renderables(model)
         
@@ -38,10 +41,13 @@ class View:
                 self.render_tile(element, frame)
             elif isinstance(element, Cursor):
                 self.render_cursor(element)
+
+        # print current tile type
+        cursor = model.get_cursor()
+        pyxel.text(0, 0, f"Current Tile: {cursor.get_current_tile_type().value}", 0)
     
     def render_tile(self, tile: Tile, frame: int):
         x, y = self.calc_xy(self.origin_x, self.origin_y,tile.position.row, tile.position.col,tile.position.height)
-
         render_func = self.tile_renderers.get(tile.get_type(), lambda x, y, frame, tile: None)
         render_func(x, y, frame, tile)
 
@@ -69,6 +75,9 @@ class View:
 
     def render_grass_tile(self,x,y, frame: int, tile: Tile):
         pyxel.blt(x, y, 0, 0, 0, 16, 16, 0)
+
+    def render_tall_grass_tile(self,x,y, frame: int, tile: Tile):
+        pyxel.blt(x, y, 0, 0, 16, 16, 16, 0)
 
     def render_dirt_tile(self,x,y, frame: int, tile: Tile):
         pyxel.blt(x, y, 0, 16, 0, 16, 16, 0)

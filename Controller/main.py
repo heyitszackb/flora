@@ -34,6 +34,8 @@ class Controller:
             self.model.cycle_cursor_tile_type()
         if pyxel.btnp(pyxel.KEY_R):
             self.model.reset_garden()
+        # if pyxel.btnr(pyxel.KEY_RETURN):
+        #     print("Key up!")
 
         if pyxel.btnp(pyxel.KEY_E):
             self.export_tool.export(self.model.garden)

@@ -1,6 +1,7 @@
 from enum import Enum
 
 class TileType(Enum):
-    GRASS = 'g'
-    DIRT = 'd'
-    WATER = 'w'
+    GRASS = 'grass'
+    DIRT = 'dirt'
+    WATER = 'water'
+    TALL_GRASS = 'tall grass'
